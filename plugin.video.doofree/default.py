@@ -5,6 +5,8 @@ ADDON = xbmcaddon.Addon(id='plugin.video.doofree')
 PATH = 'doofree'
 VERSION = '1.1.6'
 
+#test
+
 base_url = ''
 addon_handle = ''
 
