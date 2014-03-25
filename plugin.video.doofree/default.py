@@ -254,7 +254,7 @@ def HOME():
     xbmcplugin.endOfDirectory(addon_handle)
 
 def INDEX(name, url):
-    if (exists(url)):
+    if (url.endswith('.json') and exists(url)):
         data = parseJson(url)
         if (data['isFolder']):
             for item in data['list']:
