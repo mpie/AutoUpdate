@@ -16,9 +16,8 @@ us=["http://us14.seesantv.com/"]
 
 logo = xbmc.translatePath('special://home/addons/plugin.video.doofree/icon.png')
 datapath = xbmc.translatePath(ADDON.getAddonInfo('profile'))
-print datapath
 UpdatePath=os.path.join(datapath,'Update')
-print "hierppppppppppppppppppppp:" + UpdatePath
+
 try: os.makedirs(UpdatePath)
 except: pass
 
@@ -64,7 +63,6 @@ def saveUpdateFile(path,value):
     except: pass
 
 def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie = None, data = None, cookiejar = False, log = True, headers = [], type = ''):
-    import urllib2 
     UserAgent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
     try:
         if log:
@@ -118,9 +116,19 @@ def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie
         link ='website down'
         if q: q.put(link)
         return link
-    
+
+def setFile(path,content,force=False):
+    if os.path.exists(path) and not force:
+        return False
+    else:
+        try:
+            open(path,'w+').write(content)
+            return True
+        except: pass
+    return False
+
 def CheckForAutoUpdate(force = False):
-    GitHubRepo    = 'doofree'
+    GitHubRepo    = 'AutoUpdate'
     GitHubUser    = 'mpie'
     GitHubBranch  = 'master'
     GitHubPath    = 'tree/master/plugin.video.doofree'
