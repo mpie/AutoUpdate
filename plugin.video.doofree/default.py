@@ -139,7 +139,6 @@ def CheckForAutoUpdate(force = False):
         try:
             print "DooFree auto update - started"
             html=OPENURL('https://github.com/'+GitHubUser+'/'+GitHubRepo+'?files=1', mobile=True, verbose=False)
-            print html
         except: html=''
         m = re.search("View (\d+) commit",html,re.I)
         if m: gitver = int(m.group(1))
@@ -262,7 +261,6 @@ def INDEX(name, url):
                 addDir(item['title'].encode("utf-8"), item['location'], 1, item['thumbnail'])
         else:
             for item in data['list']:
-                print item
                 addLink(item['title'].encode("utf-8"), item['location'], 4, item['thumbnail'])
             
     else:
