@@ -3,7 +3,7 @@ import xbmcaddon, xbmcplugin, xbmcgui, xbmc
 
 ADDON = xbmcaddon.Addon(id='plugin.video.doofree')
 PATH = 'doofree'
-VERSION = '1.1.5'
+VERSION = '1.0.3'
 
 base_url = ''
 addon_handle = ''
@@ -16,7 +16,9 @@ us=["http://us14.seesantv.com/"]
 
 logo = xbmc.translatePath('special://home/addons/plugin.video.doofree/icon.png')
 datapath = xbmc.translatePath(ADDON.getAddonInfo('profile'))
+print datapath
 UpdatePath=os.path.join(datapath,'Update')
+print "hierppppppppppppppppppppp:" + UpdatePath
 try: os.makedirs(UpdatePath)
 except: pass
 
@@ -47,7 +49,7 @@ def moveFiles(root_src_dir,root_dst_dir):
             if os.path.exists(dst_file):
                 os.remove(dst_file)
             shutil.move(src_file, dst_dir)
-
+            
 def getUpdateFile(path,default = 0):
     if os.path.exists(path):
         try:
@@ -61,6 +63,62 @@ def saveUpdateFile(path,value):
         open(path,'w+').write(value)
     except: pass
 
+def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie = None, data = None, cookiejar = False, log = True, headers = [], type = ''):
+    import urllib2 
+    UserAgent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
+    try:
+        if log:
+            print "MU-Openurl = " + url
+        if cookie and not cookiejar:
+            import cookielib
+            cookie_file = os.path.join(os.path.join(datapath,'Cookies'), cookie+'.cookies')
+            cj = cookielib.LWPCookieJar()
+            if os.path.exists(cookie_file):
+                try: cj.load(cookie_file,True)
+                except: cj.save(cookie_file,True)
+            else: cj.save(cookie_file,True)
+            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+        elif cookiejar:
+            import cookielib
+            cj = cookielib.LWPCookieJar()
+            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+        else:
+            opener = urllib2.build_opener()
+        if mobile:
+            opener.addheaders = [('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')]
+        else:
+            opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')]
+        for header in headers:
+            opener.addheaders.append(header)
+        if data:
+            if type == 'json': 
+                import json
+                data = json.dumps(data)
+                opener.addheaders.append(('Content-Type', 'application/json'))
+            else: data = urllib.urlencode(data)
+            response = opener.open(url, data, timeout)
+        else:
+            response = opener.open(url, timeout=timeout)
+        if cookie and not cookiejar:
+            cj.save(cookie_file,True)
+        link=response.read()
+        response.close()
+        opener.close()
+        #link = net(UserAgent).http_GET(url).content
+        link=link.replace('&#39;',"'").replace('&quot;','"').replace('&amp;',"&").replace("&#39;","'").replace('&lt;i&gt;','').replace("#8211;","-").replace('&lt;/i&gt;','').replace("&#8217;","'").replace('&amp;quot;','"').replace('&#215;','x').replace('&#038;','&').replace('&#8216;','').replace('&#8211;','').replace('&#8220;','').replace('&#8221;','').replace('&#8212;','')
+        link=link.replace('%3A',':').replace('%2F','/')
+        if q: q.put(link)
+        return link
+    except Exception as e:
+        if verbose:
+            xbmc.executebuiltin("XBMC.Notification(Sorry!,Source Website is Down,3000,"+elogo+")")
+        xbmc.log('***********Website Error: '+str(e)+'**************', xbmc.LOGERROR)
+        import traceback
+        traceback.print_exc()
+        link ='website down'
+        if q: q.put(link)
+        return link
+    
 def CheckForAutoUpdate(force = False):
     GitHubRepo    = 'doofree'
     GitHubUser    = 'mpie'
@@ -72,7 +130,7 @@ def CheckForAutoUpdate(force = False):
     if verCheck == True:
         try:
             print "DooFree auto update - started"
-            html=getContent('https://github.com/'+GitHubUser+'/'+GitHubRepo+'/'+GitHubPath+'?files=1')
+            html=OPENURL('https://github.com/'+GitHubUser+'/'+GitHubRepo+'?files=1', mobile=True, verbose=False)
             print html
         except: html=''
         m = re.search("View (\d+) commit",html,re.I)
@@ -115,7 +173,7 @@ def CheckForAutoUpdate(force = False):
             if force: xbmc.executebuiltin("XBMC.Notification(DooFree Update,DooFree is up-to-date,3000,"+logo+")")
             print "DooFree auto update - DooFree is up-to-date ("+str(locver)+")"
         return
-
+    
 def getContent(url):
     content = urllib2.urlopen(url).read()
     return content
@@ -133,7 +191,7 @@ def build_url(query):
 def addDirItem(url, name, image):
     item = xbmcgui.ListItem(name, iconImage='DefaultFolder.png', thumbnailImage=image)
     xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=item, isFolder=True)
-
+    
 def addDir(name, url, mode, image):
     url = build_url({'mode': mode, 'name': name, 'url': url})
     ok = addDirItem(url, name, image)
@@ -166,7 +224,7 @@ def discoverPagination(link, url):
             pag = int (page[0]) - 1
             pageUrl = url + '&vdo_type=.mp4&page=' + str (pag)
             addThaiDir('page ' + page[0], pageUrl, 2, image)
-
+            
 def exists(url):
     try:
         r = urllib2.urlopen(url, timeout=1)
@@ -198,7 +256,7 @@ def INDEX(name, url):
             for item in data['list']:
                 print item
                 addLink(item['title'].encode("utf-8"), item['location'], 4, item['thumbnail'])
-
+            
     else:
         link = getContent(url)
         link=''.join(link.splitlines()).replace('\'','"')
@@ -227,7 +285,7 @@ def getEpisodes(url):
             channel = 'chthaipbs'
     else:
         channel = 'chall'
-
+    
     for episode in episodes:
         addThaiLink(episode[1].decode('tis-620'), seesantv + episode[0], 3, image, channel)
     # paginator
@@ -263,7 +321,7 @@ def play(name, vidurl, image):
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=image)
     item.setInfo(type="Video", infoLabels={ "Title": name })
     xbmc.Player().play(vidurl, item)
-
+    
 def getParams():
     param = []
     paramstring = sys.argv[2]
