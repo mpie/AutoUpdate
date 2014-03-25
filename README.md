@@ -1,4 +1,0 @@
-AutoUpdate
-==========
-
-DooFree auto update
