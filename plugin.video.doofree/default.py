@@ -145,7 +145,7 @@ def CheckForAutoUpdate(force = False):
             UpdateLocalName = GitHubRepo+'.zip'
             UpdateDirName   = GitHubRepo+'-'+GitHubBranch
             UpdateLocalFile = xbmc.translatePath(os.path.join(UpdatePath, UpdateLocalName))
-            main.setFile(RunningFilePath,'')
+            setFile(RunningFilePath,'')
             print "auto update - new update available ("+str(gitver)+")"
             xbmc.executebuiltin("XBMC.Notification(DooFree Update,New Update detected,3000,"+logo+")")
             xbmc.executebuiltin("XBMC.Notification(DooFree Update,Updating...,3000,"+logo+")")
