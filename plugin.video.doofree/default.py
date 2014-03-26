@@ -8,7 +8,7 @@ VERSION = '1.1.6'
 base_url = ''
 addon_handle = ''
 
-master_json = "https://raw.githubusercontent.com/mpie/doofree/master/json/master.json"
+master_json = "https://raw.githubusercontent.com/mpie/doofree/REV-1.1.5/json/master.json"
 seesantv = "http://www.seesantv.com/seesantv_2014/"
 asia=["http://as11.seesantv.com/"]
 uk=["http://uk23.seesantv.com/", "http://uk24.seesantv.com/", "http://uk12.seesantv.com/", "http://uk13.seesantv.com/", "http://uk25.seesantv.com/", "http://uk1.seesantv.com/", "http://uk27.seesantv.com/"]
