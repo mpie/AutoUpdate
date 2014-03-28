@@ -13,6 +13,7 @@ seesantv = "http://www.seesantv.com/seesantv_2014/"
 asia=["http://as11.seesantv.com/"]
 uk=["http://uk23.seesantv.com/", "http://uk24.seesantv.com/", "http://uk12.seesantv.com/", "http://uk13.seesantv.com/", "http://uk25.seesantv.com/", "http://uk1.seesantv.com/", "http://uk27.seesantv.com/"]
 us=["http://us14.seesantv.com/"]
+thaiChannels=[4,5,6,7,8,9]
 
 logo = xbmc.translatePath('special://home/addons/plugin.video.doofree/icon.png')
 datapath = xbmc.translatePath(ADDON.getAddonInfo('profile'))
@@ -199,13 +200,13 @@ def addDirItem(url, name, image):
     item = xbmcgui.ListItem(name, iconImage='DefaultFolder.png', thumbnailImage=image)
     xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=item, isFolder=True)
     
-def addDir(name, url, mode, image):
-    url = build_url({'mode': mode, 'name': name, 'url': url})
+def addDir(name, url, mode, image, cat_id):
+    url = build_url({'mode': mode, 'name': name, 'url': url, 'cat_id': cat_id})
     ok = addDirItem(url, name, image)
     return ok
 
-def addThaiDir(name, url, mode, image):
-    url = build_url({'mode': mode, 'url': url})
+def addThaiDir(name, url, mode, image, cat_id):
+    url = build_url({'mode': mode, 'url': url, 'cat_id': cat_id})
     ok = addDirItem(url, name, image)
     return ok
 
@@ -230,7 +231,7 @@ def discoverPagination(link, url):
         for page in pages:
             pag = int (page[0]) - 1
             pageUrl = url + '&vdo_type=.mp4&page=' + str (pag)
-            addThaiDir('page ' + page[0], pageUrl, 2, image)
+            addThaiDir('page ' + page[0], pageUrl, 2, image, '')
             
 def exists(url):
     try:
@@ -249,7 +250,7 @@ def HOME():
         else:
             if 'page' in item:
                 url = item['page']
-        addDir(item['title'].encode("utf-8"), url, 1, '')
+        addDir(item['title'].encode("utf-8"), url, 1, '', '')
         url = ''
     xbmcplugin.endOfDirectory(addon_handle)
 
@@ -258,7 +259,7 @@ def INDEX(name, url):
         data = parseJson(url)
         if (data['isFolder']):
             for item in data['list']:
-                addDir(item['title'].encode("utf-8"), item['location'], 1, item['thumbnail'])
+                addDir(item['title'].encode("utf-8"), item['location'], 1, item['thumbnail'], item['id'])
         else:
             for item in data['list']:
                 addLink(item['title'].encode("utf-8"), item['location'], 4, item['thumbnail'])
@@ -270,9 +271,9 @@ def INDEX(name, url):
         for licontent in limatch:
             show=re.compile('<a href="(.+?)"><img src="(.+?)" alt="(.+?)">').findall(licontent)
             title = show[0][2].decode('tis-620')
-            addThaiDir(title, seesantv + show[0][0], 2, show[0][1])
+            addThaiDir(title, seesantv + show[0][0], 2, show[0][1], item['id'])
 
-def getEpisodes(url):
+def getEpisodes(url, cat_id):
     link = getContent(url + '&vdo_type=.mp4')
     link = ''.join(link.splitlines()).replace('\'','"')
     link=''.join(link.splitlines()).replace('<i class="icon-new"></i>','')
@@ -284,14 +285,19 @@ def getEpisodes(url):
     image = re.compile('<img src="(.+?)" alt').findall(programMeta[0])[0]
 
     topInfo = re.compile('<div class="top-info">(.+?)</div>').findall(link)
-    channel = re.compile('<img src="(.+?)" width').findall(topInfo[0])
-    if (len(channel) > 0):
-        channel = 'ch' + channel[0][-5]
-        if (channel == 'chv'):
-            channel = 'chthaipbs'
+    if (cat_id in thaiChannels):
+        channel = re.compile('<img src="(.+?)" width').findall(topInfo[0])
+        if (len(channel) > 0):
+            channel = 'ch' + channel[0][-5]
+            if (channel == 'chv'):
+                channel = 'chthaipbs'
+        else:
+            channel = 'chall'
+    else if (cat_id in chMovies):
+	channel = 'chmovie'
     else:
-        channel = 'chall'
-    
+	channel = 'chserie'
+
     for episode in episodes:
         addThaiLink(episode[1].decode('tis-620'), seesantv + episode[0], 3, image, channel)
     # paginator
@@ -353,6 +359,7 @@ serverurl=None
 channel=None
 playpath=None
 image=None
+cat_id=None
 try:
     url=urllib.unquote_plus(params['url'])
 except:
@@ -381,6 +388,10 @@ try:
     image=urllib.unquote_plus(params['image'])
 except:
     pass
+try:
+    cat_id=int(params['cat_id'])
+except:
+    pass
 
 sysarg=str(sys.argv[1])
 if mode==None or url==None or len(url)<1:
@@ -390,7 +401,7 @@ if mode==None or url==None or len(url)<1:
 elif mode==1:
     INDEX(name, url)
 elif mode==2:
-    getEpisodes(url)
+    getEpisodes(url, cat_id)
 elif mode==3:
     getVideoUrl(name, url, channel)
 elif mode==4:
