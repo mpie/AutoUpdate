@@ -250,11 +250,11 @@ def HOME():
         else:
             if 'page' in item:
                 url = item['page']
-        addDir(item['title'].encode("utf-8"), url, 1, '', '')
+        addDir(item['title'].encode("utf-8"), url, 1, '', item['id'])
         url = ''
     xbmcplugin.endOfDirectory(addon_handle)
 
-def INDEX(name, url):
+def INDEX(name, url, cat_id):
     if (url.endswith('.json') and exists(url)):
         data = parseJson(url)
         if (data['isFolder']):
@@ -262,7 +262,7 @@ def INDEX(name, url):
                 addDir(item['title'].encode("utf-8"), item['location'], 1, item['thumbnail'], item['id'])
         else:
             for item in data['list']:
-                addLink(item['title'].encode("utf-8"), item['location'], 4, item['thumbnail'])
+                addLink(item['title'].encode("utf-8"), item['location'], 4, cat_id)
             
     else:
         link = getContent(url)
@@ -399,7 +399,7 @@ if mode==None or url==None or len(url)<1:
     #INDEX("Test", "https://raw.githubusercontent.com/mpie/doofree/REV-1.1.5/json/new_movies.json?4")
     HOME()
 elif mode==1:
-    INDEX(name, url)
+    INDEX(name, url, cat_id)
 elif mode==2:
     getEpisodes(url, cat_id)
 elif mode==3:
