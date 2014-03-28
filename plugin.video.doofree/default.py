@@ -14,7 +14,7 @@ asia=["http://as11.seesantv.com/"]
 uk=["http://uk23.seesantv.com/", "http://uk24.seesantv.com/", "http://uk12.seesantv.com/", "http://uk13.seesantv.com/", "http://uk25.seesantv.com/", "http://uk1.seesantv.com/", "http://uk27.seesantv.com/"]
 us=["http://us14.seesantv.com/"]
 thaiChannels=[4,5,6,7,8,9]
-
+chMovies=[10,11]
 logo = xbmc.translatePath('special://home/addons/plugin.video.doofree/icon.png')
 datapath = xbmc.translatePath(ADDON.getAddonInfo('profile'))
 UpdatePath=os.path.join(datapath,'Update')
