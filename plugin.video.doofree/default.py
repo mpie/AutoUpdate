@@ -293,10 +293,10 @@ def getEpisodes(url, cat_id):
                 channel = 'chthaipbs'
         else:
             channel = 'chall'
-    else if (cat_id in chMovies):
-	channel = 'chmovie'
+    elif (cat_id in chMovies):
+        channel = 'chmovie'
     else:
-	channel = 'chserie'
+        channel = 'chserie'
 
     for episode in episodes:
         addThaiLink(episode[1].decode('tis-620'), seesantv + episode[0], 3, image, channel)
