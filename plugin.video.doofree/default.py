@@ -262,7 +262,7 @@ def INDEX(name, url, cat_id):
                 addDir(item['title'].encode("utf-8"), item['location'], 1, item['thumbnail'], item['id'])
         else:
             for item in data['list']:
-                addLink(item['title'].encode("utf-8"), item['location'], 4, '')
+                addLink(item['title'].encode("utf-8"), item['location'], 4, item['thumbnail'])
             
     else:
         link = getContent(url)
