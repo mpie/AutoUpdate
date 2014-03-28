@@ -262,7 +262,7 @@ def INDEX(name, url, cat_id):
                 addDir(item['title'].encode("utf-8"), item['location'], 1, item['thumbnail'], item['id'])
         else:
             for item in data['list']:
-                addLink(item['title'].encode("utf-8"), item['location'], 4, cat_id)
+                addLink(item['title'].encode("utf-8"), item['location'], 4, '')
             
     else:
         link = getContent(url)
@@ -271,7 +271,7 @@ def INDEX(name, url, cat_id):
         for licontent in limatch:
             show=re.compile('<a href="(.+?)"><img src="(.+?)" alt="(.+?)">').findall(licontent)
             title = show[0][2].decode('tis-620')
-            addThaiDir(title, seesantv + show[0][0], 2, show[0][1], item['id'])
+            addThaiDir(title, seesantv + show[0][0], 2, show[0][1], cat_id)
 
 def getEpisodes(url, cat_id):
     link = getContent(url + '&vdo_type=.mp4')
