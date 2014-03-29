@@ -118,10 +118,10 @@ def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie
         if q: q.put(link)
         return link
 
-def resolve_yify(url):
+def resolve_yify(name, url):
     try:
         dialog = xbmcgui.DialogProgress()
-        dialog.create('Resolving', 'Resolving Movie Link...')
+        dialog.create('Resolving', 'Resolving %s video...' % name)
         dialog.update(0)
         print 'Yify - Requesting GET URL: %s' % url
         html = net().http_GET(url).content
@@ -226,8 +226,8 @@ def addThaiDir(name, url, mode, image, cat_id):
     ok = addDirItem(url, name, image)
     return ok
 
-def addLink(name, url, mode, image):
-    url = build_url({'mode': mode, 'name': name, 'url': url, 'image': image})
+def addLink(name, url, mode, image, resolver):
+    url = build_url({'mode': mode, 'name': name, 'url': url, 'image': image, 'resolver': resolver})
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=image)
     item.setInfo(type="Video", infoLabels={ "Title": name })
     ok = xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=item, isFolder=False)
@@ -278,11 +278,7 @@ def INDEX(name, url, cat_id):
                 addDir(item['title'].encode("utf-8"), item['location'], 1, item['thumbnail'], item['id'])
         else:
             for item in data['list']:
-		if (item['resolver'] == 'yify'):
-		    location = resolve_yify(item['location'])
-		else:
-		    location = item['location']
-                addLink(item['title'].encode("utf-8"), location, 4, item['thumbnail'])            
+                addLink(item['title'].encode("utf-8"), item['location'], 4, item['thumbnail'], item['resolver'])            
     else:
         link = getContent(url)
         link=''.join(link.splitlines()).replace('\'','"')
@@ -348,9 +344,11 @@ def getVideoUrl(name, url, channel):
                 xbmc.Player().play(fullurl)
                 break
 
-def play(name, vidurl, image):
+def play(name, vidurl, image, resolver):
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=image)
     item.setInfo(type="Video", infoLabels={ "Title": name })
+    if resolver == 'yify':
+        vidurl=resolve_yify(name, vidurl)
     xbmc.Player().play(vidurl, item)
     
 def getParams():
@@ -379,6 +377,7 @@ channel=None
 playpath=None
 image=None
 cat_id=None
+resolver=None
 try:
     url=urllib.unquote_plus(params['url'])
 except:
@@ -411,6 +410,10 @@ try:
     cat_id=int(params['cat_id'])
 except:
     pass
+try:
+    resolver=params['resolver']
+except:
+    pass
 
 sysarg=str(sys.argv[1])
 if mode==None or url==None or len(url)<1:
@@ -424,6 +427,6 @@ elif mode==2:
 elif mode==3:
     getVideoUrl(name, url, channel)
 elif mode==4:
-    play(name, url, image)
+    play(name, url, image, resolver)
 
 xbmcplugin.endOfDirectory(addon_handle)
