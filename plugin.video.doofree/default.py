@@ -5,7 +5,6 @@ from t0mm0.common.net import Net as net
 ADDON = xbmcaddon.Addon(id='plugin.video.doofree')
 PATH = 'doofree'
 VERSION = '1.1.6'
-#djsalkjdaljadskl
 base_url = ''
 addon_handle = ''
 
@@ -117,6 +116,76 @@ def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie
         link ='website down'
         if q: q.put(link)
         return link
+
+def resolve_movreel(name, url):
+
+    try:
+
+        #Show dialog box so user knows something is happening
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving %s Link...' % name)
+        dialog.update(0)
+
+        print 'Movreel - Requesting GET URL: %s' % url
+        html = net().http_GET(url).content
+
+        dialog.update(33)
+
+        #Check page for any error msgs
+        if re.search('This server is in maintenance mode', html):
+            logerror('***** DooFree - Site reported maintenance mode')
+            xbmc.executebuiltin("XBMC.Notification(File is currently unavailable on the host,DooFree in maintenance,2000)")
+
+        #Set POST data values
+        op = re.search('<input type="hidden" name="op" value="(.+?)">', html).group(1)
+        postid = re.search('<input type="hidden" name="id" value="(.+?)">', html).group(1)
+        method_free = re.search('<input type="(submit|hidden)" name="method_free" (style=".*?" )*value="(.*?)">', html).group(3)
+        method_premium = re.search('<input type="(hidden|submit)" name="method_premium" (style=".*?" )*value="(.*?)">', html).group(3)
+
+
+        rand = re.search('<input type="hidden" name="rand" value="(.+?)">', html).group(1)
+        data = {'op': op, 'id': postid, 'referer': url, 'rand': rand, 'method_premium': method_premium}
+
+        print 'Movreel - Requesting POST URL: %s DATA: %s' % (url, data)
+        html = net().http_POST(url, data).content
+
+        #Only do next post if Free account, skip to last page for download link if Premium
+        if method_free:
+            #Check for download limit error msg
+            if re.search('<p class="err">.+?</p>', html):
+                logerror('***** Download limit reached')
+                errortxt = re.search('<p class="err">(.+?)</p>', html).group(1)
+                xbmc.executebuiltin("XBMC.Notification("+errortxt+",Movreel,2000)")
+
+            dialog.update(66)
+
+            #Set POST data values
+            data = {}
+            r = re.findall(r'type="hidden" name="(.+?)" value="(.+?)">', html)
+
+            if r:
+                for name, value in r:
+                    data[name] = value
+            else:
+                logerror('***** DooFree - Cannot find data values')
+                xbmc.executebuiltin("XBMC.Notification(Unable to resolve Movreel Link,Movreel,2000)")
+
+            print 'Movreel - Requesting POST URL: %s DATA: %s' % (url, data)
+            html = net().http_POST(url, data).content
+
+        #Get download link
+        dialog.update(100)
+        link = re.search('<a href="(.+)">Download Link</a>', html)
+        if link:
+	    return link.group(1)
+        else:
+            xbmc.executebuiltin("XBMC.Notification(Unable to find final link,Movreel,2000)")
+
+    except Exception, e:
+        logerror('**** Movreel Error occured: %s' % e)
+        raise ResolverError(str(e),"Movreel")
+    finally:
+        dialog.close()
 
 def resolve_yify(name, url):
     try:
@@ -348,7 +417,9 @@ def play(name, vidurl, image, resolver):
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=image)
     item.setInfo(type="Video", infoLabels={ "Title": name })
     if resolver == 'yify':
-        vidurl=resolve_yify(name, vidurl)
+        vidurl = resolve_yify(name, vidurl)
+    if resolver == 'movreel':
+	vidurl = resolve_movreel(name, vidurl)
     xbmc.Player().play(vidurl, item)
     
 def getParams():
