@@ -1,5 +1,6 @@
 import re, urllib2, urllib, json, threading, os, zipfile, shutil
 import xbmcaddon, xbmcplugin, xbmcgui, xbmc
+from t0mm0.common.net import Net as net
 
 ADDON = xbmcaddon.Addon(id='plugin.video.doofree')
 PATH = 'doofree'
@@ -35,7 +36,6 @@ def unzipAndMove(_in, _out , src):
     except Exception, e:
         print str(e)
         return False
-
     return True
 
 def moveFiles(root_src_dir,root_dst_dir):
@@ -117,6 +117,22 @@ def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie
         link ='website down'
         if q: q.put(link)
         return link
+
+def resolve_yify(url):
+    try:
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving Movie Link...')
+        dialog.update(0)
+        print 'Yify - Requesting GET URL: %s' % url
+        html = net().http_GET(url).content
+        url = re.compile('showPkPlayer[(]"(.+?)"[)]').findall(html)[0]
+        url = 'http://yify.tv/reproductor2/pk/pk/plugins/player_p.php?url=https%3A//picasaweb.google.com/' + url
+        html = net().http_GET(url).content
+        html = re.compile('{(.+?)}').findall(html)[-1]
+        stream_url = re.compile('"url":"(.+?)"').findall(html)[0]
+        return stream_url
+    except Exception, e:
+        print('**** Yify Error occured: %s' % e, ' url: %s' % url)
 
 def setFile(path,content,force=False):
     if os.path.exists(path) and not force:
@@ -262,8 +278,11 @@ def INDEX(name, url, cat_id):
                 addDir(item['title'].encode("utf-8"), item['location'], 1, item['thumbnail'], item['id'])
         else:
             for item in data['list']:
-                addLink(item['title'].encode("utf-8"), item['location'], 4, item['thumbnail'])
-            
+		if (item['resolver'] == 'yify'):
+		    location = resolve_yify(item['location'])
+		else:
+		    location = item['location']
+                addLink(item['title'].encode("utf-8"), location, 4, item['thumbnail'])            
     else:
         link = getContent(url)
         link=''.join(link.splitlines()).replace('\'','"')
