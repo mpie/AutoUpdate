@@ -333,8 +333,9 @@ def addThaiDir(name, url, mode, image, cat_id):
 
 def addMboxTVDir(name, seasons, mode, cat_id):
     for s in reversed(range(int(seasons))):
+        name = name.strip()+' Season '+str(s+1)
         url = build_url({'url': 'video', 'mode': mode, 'name': name, 'season': str(s+1), 'cat_id': cat_id})
-        addDirItem(url, name.strip()+' Season '+str(s+1), '')
+        addDirItem(url, name '+str(s+1), '')
     return True
 
 def addLink(name, url, mode, image, resolver):
