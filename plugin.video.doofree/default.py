@@ -117,6 +117,31 @@ def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie
         if q: q.put(link)
         return link
 
+def resolve_vk(name, url):
+    try:
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving %s Link...' % name)
+        dialog.update(0)
+        print 'VK - Requesting GET URL: %s' % url
+        useragent='Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7'
+        link2 = net(user_agent=useragent).http_GET(url).content
+        if re.search('This video has been removed', link2, re.I):
+            xbmc.executebuiltin("XBMC.Notification(This video has been removed,VK,2000)")
+            return False
+        match = re.search('(?i)<source src="(.+?\.1080.mp4.+?)"',link2)
+        if not match:
+            match = re.search('(?i)<source src="(.+?\.720.mp4.+?)"',link2)
+            if not match:
+                match = re.search('(?i)<source src="(.+?\.480.mp4.+?)"',link2)
+                if not match:
+                    match = re.search('(?i)<source src="(.+?\.360.mp4.+?)"',link2)
+                    if not match:
+                        match = re.search('(?i)<source src="(.+?\.240.mp4.+?)"',link2)
+        if match:
+            return match.group(1).replace("\/",'/')
+    except Exception, e:
+        xbmc.executebuiltin('[B][COLOR white]DooFree[/COLOR][/B]','[COLOR red]%s[/COLOR]' % e, 5000, logo)
+
 def resolve_mbox(name, url):
     try:
         r = re.findall('h=(\d+?)&u=(\d+?)&y=(\d+)',url,re.I)
