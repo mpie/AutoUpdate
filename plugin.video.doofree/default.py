@@ -117,10 +117,24 @@ def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie
         if q: q.put(link)
         return link
 
-def resolve_movreel(name, url):
-
+def resolve_mbox(name, url):
     try:
+        r = re.findall('h=(\d+?)&u=(\d+?)&y=(\d+)',url,re.I)
+        if r: r = int(r[0][0]) + int(r[0][1]) + int(r[0][2])
+        else: r = 537 + int(re.findall('id=(\d+)',url,re.I)[0])
+        link=OPENURL(url,verbose=False)
+        q = re.findall('"lang":"en","apple":([-\d]+?),"google":([-\d]+?),"microsoft":"([^"]+?)"',link,re.I)
+        vklink = "https://vk.com/video_ext.php?oid="+str(r + int(q[0][0]))+"&id="+str(r + int(q[0][1]))+"&hash="+q[0][2]
+    except:
+        vklink=url
+    vklink=vklink.replace("\/",'/')
+    stream_url = resolve_vk(name, vklink)
+    if stream_url == False: return
+    stream_url=stream_url.replace(' ','%20')
+    return stream_url
 
+def resolve_movreel(name, url):
+    try:
         #Show dialog box so user knows something is happening
         dialog = xbmcgui.DialogProgress()
         dialog.create('Resolving', 'Resolving %s Link...' % name)
@@ -153,7 +167,6 @@ def resolve_movreel(name, url):
         if method_free:
             #Check for download limit error msg
             if re.search('<p class="err">.+?</p>', html):
-                logerror('***** Download limit reached')
                 errortxt = re.search('<p class="err">(.+?)</p>', html).group(1)
                 xbmc.executebuiltin("XBMC.Notification("+errortxt+",Movreel,2000)")
 
@@ -167,7 +180,6 @@ def resolve_movreel(name, url):
                 for name, value in r:
                     data[name] = value
             else:
-                logerror('***** DooFree - Cannot find data values')
                 xbmc.executebuiltin("XBMC.Notification(Unable to resolve Movreel Link,Movreel,2000)")
 
             print 'Movreel - Requesting POST URL: %s DATA: %s' % (url, data)
@@ -182,7 +194,6 @@ def resolve_movreel(name, url):
             xbmc.executebuiltin("XBMC.Notification(Unable to find final link,Movreel,2000)")
 
     except Exception, e:
-        logerror('**** Movreel Error occured: %s' % e)
         raise ResolverError(str(e),"Movreel")
     finally:
         dialog.close()
@@ -419,7 +430,9 @@ def play(name, vidurl, image, resolver):
     if resolver == 'yify':
         vidurl = resolve_yify(name, vidurl)
     if resolver == 'movreel':
-	vidurl = resolve_movreel(name, vidurl)
+	    vidurl = resolve_movreel(name, vidurl)
+    if resolver == 'mbox':
+        vidurl = resolve_mbox(name, vidurl)
     xbmc.Player().play(vidurl, item)
     
 def getParams():
