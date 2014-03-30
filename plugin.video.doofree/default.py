@@ -66,7 +66,7 @@ def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie
     UserAgent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
     try:
         if log:
-            print "MU-Openurl = " + url
+            print "Openurl = " + url
         if cookie and not cookiejar:
             import cookielib
             cookie_file = os.path.join(os.path.join(datapath,'Cookies'), cookie+'.cookies')
@@ -331,6 +331,12 @@ def addThaiDir(name, url, mode, image, cat_id):
     ok = addDirItem(url, name, image)
     return ok
 
+def addMboxTVDir(name, seasons, mode, cat_id):
+    for s in reversed(range(int(seasons))):
+        url = build_url({'url': 'video', 'mode': mode, 'name': name, 'season': str(s+1), 'cat_id': cat_id})
+        addDirItem(url, name.strip()+' Season '+str(s+1), '')
+    return True
+
 def addLink(name, url, mode, image, resolver):
     url = build_url({'mode': mode, 'name': name, 'url': url, 'image': image, 'resolver': resolver})
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=image)
@@ -379,8 +385,12 @@ def INDEX(name, url, cat_id):
     if (url.endswith('.json') and exists(url)):
         data = parseJson(url)
         if (data['isFolder']):
-            for item in data['list']:
-                addDir(item['title'].encode("utf-8"), item['location'], 1, item['thumbnail'], item['id'])
+            if 'resolver' in data:
+                if data['resolver'] == 'mbox':
+                    addMboxTVDir(name, data['seasons'], 5, data['id'])
+            else:
+                for item in data['list']:
+                    addDir(item['title'].encode("utf-8"), item['location'], 1, item['thumbnail'], item['id'])
         else:
             for item in data['list']:
                 addLink(item['title'].encode("utf-8"), item['location'], 4, item['thumbnail'], item['resolver'])            
@@ -392,6 +402,26 @@ def INDEX(name, url, cat_id):
             show=re.compile('<a href="(.+?)"><img src="(.+?)" alt="(.+?)">').findall(licontent)
             title = show[0][2].decode('tis-620')
             addThaiDir(title, seesantv + show[0][0], 2, show[0][1], cat_id)
+
+def getMboxEpisodes(name, cat_id, season):
+    getepi='http://mobapps.cc/api/serials/es/?id='+str(cat_id)+'&season='+str(season)
+    link=OPENURL(getepi)
+    match=re.findall('"(\d+)":"([^"]+?)"',link,re.DOTALL)
+    dialogWait = xbmcgui.DialogProgress()
+    ret = dialogWait.create('Please wait until Episodes list is cached.')
+    totalLinks = len(match)
+    loadedLinks = 0
+    remaining_display = 'Episodes Cached :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+    dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
+    xbmc.executebuiltin("XBMC.Dialog.Close(busydialog,true)")
+    for epinum,thumb in match:
+        addLink(name+' Episode '+epinum, 'http://mobapps.cc/api/serials/e/?h='+str(cat_id)+'&u='+str(season)+'&y='+epinum, 4, thumb.replace('\/','/'), 'mbox')
+        loadedLinks = loadedLinks + 1
+        percent = (loadedLinks * 100)/totalLinks
+        remaining_display = 'Episodes Cached :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+        dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
+        if dialogWait.iscanceled():
+            return False
 
 def getEpisodes(url, cat_id):
     link = getContent(url + '&vdo_type=.mp4')
@@ -523,6 +553,10 @@ try:
     resolver=params['resolver']
 except:
     pass
+try:
+    season=params['season']
+except:
+    pass
 
 sysarg=str(sys.argv[1])
 if mode==None or url==None or len(url)<1:
@@ -537,5 +571,6 @@ elif mode==3:
     getVideoUrl(name, url, channel)
 elif mode==4:
     play(name, url, image, resolver)
-
+elif mode==5:
+    getMboxEpisodes(name, cat_id, season)
 xbmcplugin.endOfDirectory(addon_handle)
