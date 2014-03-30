@@ -333,9 +333,8 @@ def addThaiDir(name, url, mode, image, cat_id):
 
 def addMboxTVDir(name, seasons, mode, cat_id):
     for s in reversed(range(int(seasons))):
-        name = name.strip()+' Season '+str(s+1)
         url = build_url({'url': 'video', 'mode': mode, 'name': name, 'season': str(s+1), 'cat_id': cat_id})
-        addDirItem(url, name, '')
+        addDirItem(url, name.strip()+' Season '+str(s+1), '')
     return True
 
 def addLink(name, url, mode, image, resolver):
@@ -416,7 +415,7 @@ def getMboxEpisodes(name, cat_id, season):
     dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
     xbmc.executebuiltin("XBMC.Dialog.Close(busydialog,true)")
     for epinum,thumb in match:
-        addLink(name+' Episode '+epinum, 'http://mobapps.cc/api/serials/e/?h='+str(cat_id)+'&u='+str(season)+'&y='+epinum, 4, thumb.replace('\/','/'), 'mbox')
+        addLink(name+' S'+season+'E'+epinum, 'http://mobapps.cc/api/serials/e/?h='+str(cat_id)+'&u='+str(season)+'&y='+epinum, 4, thumb.replace('\/','/'), 'mbox')
         loadedLinks = loadedLinks + 1
         percent = (loadedLinks * 100)/totalLinks
         remaining_display = 'Episodes Cached :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
