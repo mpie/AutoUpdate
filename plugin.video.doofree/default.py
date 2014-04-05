@@ -365,7 +365,7 @@ def exists(url):
         r = urllib2.urlopen(url, timeout=1)
         if r.getcode() == 200:
             return True
-    except urllib2.URLError, e:
+    except Exception, e:
         return False
 
 def HOME():
