@@ -11,7 +11,7 @@ addon_handle = ''
 master_json = "https://raw.github.com/mpie/doofree/master/json/master.json"
 seesantv = "http://www.seesantv.com/seesantv_2014/"
 asia=["http://as11.seesantv.com/"]
-uk=["http://uk23.seesantv.com/", "http://uk24.seesantv.com/", "http://uk12.seesantv.com/", "http://uk13.seesantv.com/", "http://uk25.seesantv.com/", "http://uk1.seesantv.com/", "http://uk27.seesantv.com/", "http://us14.seesantv.com", "http://us6.seesantv.com"]
+uk=["http://uk23.seesantv.com/", "http://uk24.seesantv.com/", "http://uk12.seesantv.com/", "http://uk13.seesantv.com/", "http://uk25.seesantv.com/", "http://uk1.seesantv.com/", "http://uk27.seesantv.com/"]
 us=["http://us14.seesantv.com/"]
 thaiChannels=[4,5,6,7,8,9]
 chMovies=[10,11]
@@ -319,7 +319,8 @@ def build_url(query):
 
 def addDirItem(url, name, image):
     item = xbmcgui.ListItem(name, iconImage='DefaultFolder.png', thumbnailImage=image)
-    xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=item, isFolder=True)
+    ok = xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=item, isFolder=True)
+    return ok
     
 def addDir(name, url, mode, image, cat_id):
     url = build_url({'mode': mode, 'name': name, 'url': url, 'cat_id': cat_id})
@@ -351,7 +352,7 @@ def addThaiLink(name, url, mode, image, channel):
     ok = xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=item, isFolder=False)
     return ok
 
-def discoverPagination(link, url):
+def discoverPagination(link, url, image):
     paginator=re.compile('<div class="page_list"  align="center">(.+?)</ul>').findall(link)[0]
     pages=re.compile('>(\d+)</a>').findall(paginator)
     if (len(pages) > 1):
@@ -451,9 +452,14 @@ def getEpisodes(url, cat_id):
     for episode in episodes:
         addThaiLink(episode[1].decode('tis-620'), seesantv + episode[0], 3, image, channel)
     # paginator
-    discoverPagination(link, url)
+    discoverPagination(link, url, image)
 
 def getVideoUrl(name, url, channel):
+    dialog = xbmcgui.DialogProgress()
+    dialog.create('Resolving', 'Resolving %s Link...' % name)
+    dialog.update(0)
+    item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
+    item.setInfo(type="Video", infoLabels={ "Title": name })
     trySD = True
     programId = re.compile('program_id=(\d+)').findall(url)[0]
     if (len(programId) < 5):
@@ -468,7 +474,7 @@ def getVideoUrl(name, url, channel):
         fullurl = host + hd
         found = exists(fullurl)
         if (found):
-            xbmc.Player().play(fullurl)
+            xbmc.Player().play(fullurl,item)
             trySD = False
             break
     if (trySD):
@@ -476,7 +482,7 @@ def getVideoUrl(name, url, channel):
             fullurl = host + sd
             found = exists(fullurl)
             if (found):
-                xbmc.Player().play(fullurl)
+                xbmc.Player().play(fullurl, item)
                 break
 
 def play(name, vidurl, image, resolver):
