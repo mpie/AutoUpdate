@@ -117,6 +117,35 @@ def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie
         if q: q.put(link)
         return link
 
+def resolve_firedrive(name, url):
+    try:
+        url=url.replace('putlocker.com','firedrive.com').replace('putlocker.to','firedrive.com')
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving %s Link...' % name)
+        dialog.update(0)
+        print 'DooFree Firedrive - Requesting GET URL: %s' % url
+        html = net().http_GET(url).content
+        dialog.update(50)
+        if dialog.iscanceled(): return None
+        post_data = {}
+        r = re.findall(r'(?i)<input type="hidden" name="(.+?)" value="(.+?)"', html)
+        for name, value in r:
+            post_data[name] = value
+        post_data['referer'] = url
+        html = net().http_POST(url, post_data).content
+        embed=re.findall('(?sim)href="([^"]+?)">Download file</a>',html)
+        if not embed:
+            embed=re.findall('(?sim)href="(http://dl.firedrive.com[^"]+?)"',html)
+        if dialog.iscanceled(): return None
+        if embed:
+            dialog.update(100)
+            return embed[0]
+        else:
+            xbmc.executebuiltin("XBMC.Notification(File Not Found,Firedrive,2000)")
+            return False
+    except Exception, e:
+        xbmc.executebuiltin('[B][COLOR white]Firedrive[/COLOR][/B]','[COLOR red]%s[/COLOR]' % e, 5000, logo)
+
 def resolve_vk(name, url):
     try:
         dialog = xbmcgui.DialogProgress()
@@ -494,6 +523,8 @@ def play(name, vidurl, image, resolver):
 	    vidurl = resolve_movreel(name, vidurl)
     if resolver == 'mbox':
         vidurl = resolve_mbox(name, vidurl)
+    if resolver == 'firedrive':
+        vidurl = resolve_firedrive(name, vidurl)
     xbmc.Player().play(vidurl, item)
     
 def getParams():
