@@ -18,6 +18,7 @@ chMovies=[10,11]
 logo = xbmc.translatePath('special://home/addons/plugin.video.doofree/icon.png')
 datapath = xbmc.translatePath(ADDON.getAddonInfo('profile'))
 UpdatePath=os.path.join(datapath,'Update')
+useragent = 'android-async-http/1.4.1 (http://loopj.com/android-async-http)'
 
 try: os.makedirs(UpdatePath)
 except: pass
@@ -62,8 +63,10 @@ def saveUpdateFile(path,value):
         open(path,'w+').write(value)
     except: pass
 
-def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie = None, data = None, cookiejar = False, log = True, headers = [], type = ''):
+def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie = None, data = None, cookiejar = False, log = True, headers = [], type = '',ua = False):
+    import urllib2
     UserAgent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
+    if ua: UserAgent = ua
     try:
         if log:
             print "Openurl = " + url
@@ -85,7 +88,7 @@ def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie
         if mobile:
             opener.addheaders = [('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')]
         else:
-            opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')]
+            opener.addheaders = [('User-Agent', UserAgent)]
         for header in headers:
             opener.addheaders.append(header)
         if data:
@@ -176,7 +179,7 @@ def resolve_mbox(name, url):
         r = re.findall('h=(\d+?)&u=(\d+?)&y=(\d+)',url,re.I)
         if r: r = int(r[0][0]) + int(r[0][1]) + int(r[0][2])
         else: r = 537 + int(re.findall('id=(\d+)',url,re.I)[0])
-        link=OPENURL(url,verbose=False)
+        link=OPENURL(url,verbose=False,ua=useragent)
         q = re.findall('"lang":"en","apple":([-\d]+?),"google":([-\d]+?),"microsoft":"([^"]+?)"',link,re.I)
         vklink = "https://vk.com/video_ext.php?oid="+str(r + int(q[0][0]))+"&id="+str(r + int(q[0][1]))+"&hash="+q[0][2]
     except:
@@ -435,7 +438,7 @@ def INDEX(name, url, cat_id):
 
 def getMboxEpisodes(name, cat_id, season):
     getepi='http://mobapps.cc/api/serials/es/?id='+str(cat_id)+'&season='+str(season)
-    link=OPENURL(getepi)
+    link=OPENURL(getepi,ua=useragent)
     match=re.findall('"(\d+)":"([^"]+?)"',link,re.DOTALL)
     dialogWait = xbmcgui.DialogProgress()
     ret = dialogWait.create('Please wait until Episodes list is cached.')
