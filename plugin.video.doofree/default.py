@@ -433,7 +433,7 @@ def INDEX(name, url, cat_id):
         limatch=re.compile('<figure>(.+?)</a><figcaption>').findall(link)
         for licontent in limatch:
             show=re.compile('<a href="(.+?)"><img src="(.+?)" alt="(.+?)">').findall(licontent)
-            title = show[0][2].decode('tis-620')
+            title = show[0][2].decode('iso-8859-11')
             addThaiDir(title, seesantv + show[0][0], 2, show[0][1], cat_id)
 
 def getMboxEpisodes(name, cat_id, season):
