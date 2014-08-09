@@ -509,7 +509,7 @@ def getVideoUrl(name, url, channel):
     programId = re.compile('program_id=(\d+)').findall(url)[0]
     if (len(programId) < 4):
         programId = '00' + programId
-    elseif (len(programId) < 5):
+    elif (len(programId) < 5):
         programId = '0' + programId
 
     fullDate = re.compile('(\d+-\d+-\d+) ').findall(name)[0]
