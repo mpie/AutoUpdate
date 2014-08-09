@@ -378,7 +378,7 @@ def addLink(name, url, mode, image, resolver):
     return ok
 
 def addThaiLink(name, url, mode, image, channel):
-    url = build_url({'mode': mode, 'name': name.encode('tis-620'), 'url': url, 'channel': channel, 'image': image})
+    url = build_url({'mode': mode, 'name': name.encode('iso-8859-11'), 'url': url, 'channel': channel, 'image': image})
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=image)
     item.setInfo(type="Video", infoLabels={ "Title": name })
     ok = xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=item, isFolder=False)
@@ -438,8 +438,7 @@ def INDEX(name, url, cat_id):
         pageContent = ''.join(pageContent.splitlines()).replace('\'','"')
         pageMatch=re.compile('id="a_page_(.+?)" href').findall(pageContent)
         for page in pageMatch:
-            realPage = int(page)+1
-            pageUrl = seesantv + 'program_ajax3.php?id=' + str(cat_id) + '&page=' + str(realPage)
+            pageUrl = seesantv + 'program_ajax3.php?id=' + str(cat_id) + '&page=' + str(page)
             pageLink = getContent(pageUrl)
             pageLink=''.join(pageLink.splitlines()).replace('\'','"')             
             limatch+=re.compile('<figure>(.+?)</a><figcaption>').findall(pageLink)
@@ -495,7 +494,7 @@ def getEpisodes(url, cat_id):
         channel = 'chserie'
 
     for episode in episodes:
-        addThaiLink(episode[1].decode('tis-620'), seesantv + episode[0], 3, image, channel)
+        addThaiLink(episode[1].decode('iso-8859-11'), seesantv + episode[0], 3, image, channel)
     # paginator
     discoverPagination(link, url, image)
 
@@ -506,9 +505,13 @@ def getVideoUrl(name, url, channel):
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
     item.setInfo(type="Video", infoLabels={ "Title": name })
     trySD = True
+    
     programId = re.compile('program_id=(\d+)').findall(url)[0]
-    if (len(programId) < 5):
+    if (len(programId) < 4):
+        programId = '00' + programId
+    elseif (len(programId) < 5):
         programId = '0' + programId
+
     fullDate = re.compile('(\d+-\d+-\d+) ').findall(name)[0]
     date = ''.join(fullDate.splitlines()).replace('-','')
     hd = channel + '/' + programId + '/' + date + '1-' + programId + '.mp4'
@@ -517,6 +520,7 @@ def getVideoUrl(name, url, channel):
     for host in uk:
         #fullurl = "http://uk" + str (host) + ".seesantv.com/" + path
         fullurl = host + hd
+        print fullurl
         found = exists(fullurl)
         if (found):
             xbmc.Player().play(fullurl,item)
