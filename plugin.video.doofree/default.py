@@ -431,6 +431,19 @@ def INDEX(name, url, cat_id):
         link = getContent(url)
         link=''.join(link.splitlines()).replace('\'','"')
         limatch=re.compile('<figure>(.+?)</a><figcaption>').findall(link)
+
+        # grab content from underlying pages
+        catUrl = seesantv + 'program.php?id=' + str(cat_id)
+        pageContent = getContent(catUrl)
+        pageContent = ''.join(pageContent.splitlines()).replace('\'','"')
+        pageMatch=re.compile('id="a_page_(.+?)" href').findall(pageContent)
+        for page in pageMatch:
+            realPage = int(page)+1
+            pageUrl = seesantv + 'program_ajax3.php?id=' + str(cat_id) + '&page=' + str(realPage)
+            pageLink = getContent(pageUrl)
+            pageLink=''.join(pageLink.splitlines()).replace('\'','"')             
+            limatch+=re.compile('<figure>(.+?)</a><figcaption>').findall(pageLink)
+ 
         for licontent in limatch:
             show=re.compile('<a href="(.+?)"><img src="(.+?)" alt="(.+?)">').findall(licontent)
             title = show[0][2].decode('iso-8859-11')
