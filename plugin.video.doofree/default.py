@@ -12,7 +12,8 @@ master_json = "https://raw.github.com/mpie/doofree/master/json/master.json"
 seesantv = "http://www.seesantv.com/seesantv_2014/"
 asia=["http://as11.seesantv.com/"]
 uk=["http://uk23.seesantv.com/", "http://uk24.seesantv.com/", "http://uk12.seesantv.com/", "http://uk13.seesantv.com/", "http://uk25.seesantv.com/", "http://uk1.seesantv.com/", "http://uk27.seesantv.com/"]
-us=["http://us14.seesantv.com/"]
+us=["http://us14.seesantv.com/", "http://us15.seesantv.com/"]
+asian=["http://as2.seesantv.com/"]
 thaiChannels=[18,27,17,15,8,84,4,14,38]
 chMovies=[92,98,93]
 logo = xbmc.translatePath('special://home/addons/plugin.video.doofree/icon.png')
@@ -433,12 +434,13 @@ def INDEX(name, url, cat_id):
         limatch=re.compile('<figure>(.+?)</a><figcaption>').findall(link)
 
         # grab content from underlying pages
+        print url
         catUrl = seesantv + 'program.php?id=' + str(cat_id)
         pageContent = getContent(catUrl)
         pageContent = ''.join(pageContent.splitlines()).replace('\'','"')
         pageMatch=re.compile('id="a_page_(.+?)" href').findall(pageContent)
         for page in pageMatch:
-            pageUrl = seesantv + 'program_ajax3.php?id=' + str(cat_id) + '&page=' + str(page)
+            pageUrl = url + '&page=' + str(page)
             pageLink = getContent(pageUrl)
             pageLink=''.join(pageLink.splitlines()).replace('\'','"')             
             limatch+=re.compile('<figure>(.+?)</a><figcaption>').findall(pageLink)
@@ -493,17 +495,28 @@ def getEpisodes(url, cat_id):
     else:
         channel = 'chserie'
 
+    # paginator
+    paginator=re.compile('<div class="page_list"  align="center">(.+?)</ul>').findall(link)[0]
+    pages=re.compile('>(\d+)</a>').findall(paginator)
+    if (len(pages) > 1):
+        for page in pages:
+            pag = int (page)
+            pageUrl = url + '&vdo_type=.mp4&page=' + str (pag)
+            link = getContent(pageUrl)
+            link = ''.join(link.splitlines()).replace('\'','"')
+            link=''.join(link.splitlines()).replace('<i class="icon-new"></i>','')
+            episodematch = re.compile('<table class="program-archive">(.+?)</table>').findall(link)
+            episodes += re.compile('<a href="(.+?)" >(.+?)</a> </td>                           \t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t<a href="(.+?)" ><img').findall(episodematch[0])
+    
     for episode in episodes:
         addThaiLink(episode[1].decode('iso-8859-11'), seesantv + episode[0], 3, image, channel)
-    # paginator
-    discoverPagination(link, url, image)
 
 def getVideoUrl(name, url, channel):
     dialog = xbmcgui.DialogProgress()
-    dialog.create('Resolving', 'Resolving %s Link...' % name)
+    dialog.create('Resolving', 'Resolving %s Link...' % name.decode('iso-8859-11'))
     dialog.update(0)
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
-    item.setInfo(type="Video", infoLabels={ "Title": name })
+    item.setInfo(type="Video", infoLabels={ "Title": name.decode('iso-8859-11') })
     trySD = True
     
     programId = re.compile('program_id=(\d+)').findall(url)[0]
@@ -516,6 +529,7 @@ def getVideoUrl(name, url, channel):
     date = ''.join(fullDate.splitlines()).replace('-','')
     hd = channel + '/' + programId + '/' + date + '1-' + programId + '.mp4'
     sd = channel + '/' + programId + '/' + date + '-' + programId + '.mp4'
+    print sd
     #for host in xrange(1, 31):
     for host in uk:
         #fullurl = "http://uk" + str (host) + ".seesantv.com/" + path
@@ -525,14 +539,48 @@ def getVideoUrl(name, url, channel):
             xbmc.Player().play(fullurl,item)
             trySD = False
             break
-    if (trySD):
+    if (trySD and found==False):
         for host in uk:
             fullurl = host + sd
             found = exists(fullurl)
             if (found):
                 xbmc.Player().play(fullurl, item)
                 break
-
+    if (found==False):
+        for host in us:
+            #fullurl = "http://us" + str (host) + ".seesantv.com/" + path
+            fullurl = host + hd
+            found = exists(fullurl)
+            if (found):
+                xbmc.Player().play(fullurl,item)
+                trySD = False
+                break
+        if (trySD and found==False):
+            for host in us:
+                fullurl = host + sd
+                print fullurl
+                found = exists(fullurl)
+                if (found):
+                    xbmc.Player().play(fullurl, item)
+                    break
+    if (found==False):
+        for host in asian:
+            #fullurl = "http://as" + str (host) + ".seesantv.com/" + path
+            fullurl = host + hd
+            print fullurl
+            found = exists(fullurl)
+            if (found):
+                xbmc.Player().play(fullurl,item)
+                trySD = False
+                break
+        if (trySD and found==False):
+            for host in asian:
+                fullurl = host + sd
+                found = exists(fullurl)
+                if (found):
+                    xbmc.Player().play(fullurl, item)
+                    break
+    
 def play(name, vidurl, image, resolver):
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=image)
     item.setInfo(type="Video", infoLabels={ "Title": name })
