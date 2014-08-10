@@ -13,8 +13,8 @@ seesantv = "http://www.seesantv.com/seesantv_2014/"
 asia=["http://as11.seesantv.com/"]
 uk=["http://uk23.seesantv.com/", "http://uk24.seesantv.com/", "http://uk12.seesantv.com/", "http://uk13.seesantv.com/", "http://uk25.seesantv.com/", "http://uk1.seesantv.com/", "http://uk27.seesantv.com/"]
 us=["http://us14.seesantv.com/"]
-thaiChannels=[4,5,6,7,8,9]
-chMovies=[10,11,13]
+thaiChannels=[18,27,17,15,8,84,4,14,38]
+chMovies=[92,98,93]
 logo = xbmc.translatePath('special://home/addons/plugin.video.doofree/icon.png')
 datapath = xbmc.translatePath(ADDON.getAddonInfo('profile'))
 UpdatePath=os.path.join(datapath,'Update')
@@ -520,7 +520,6 @@ def getVideoUrl(name, url, channel):
     for host in uk:
         #fullurl = "http://uk" + str (host) + ".seesantv.com/" + path
         fullurl = host + hd
-        print fullurl
         found = exists(fullurl)
         if (found):
             xbmc.Player().play(fullurl,item)
