@@ -494,14 +494,17 @@ def getEpisodes(url, cat_id):
         channel = 'chmovie'
     else:
         channel = 'chserie'
-
+    print channel
     # paginator
     paginator=re.compile('<div class="page_list"  align="center">(.+?)</ul>').findall(link)[0]
     pages=re.compile('>(\d+)</a>').findall(paginator)
     if (len(pages) > 1):
         for page in pages:
+            if (page == '3' and channel == 'chall'):
+                break
             pag = int (page)
             pageUrl = url + '&vdo_type=.mp4&page=' + str (pag)
+            print pageUrl
             link = getContent(pageUrl)
             link = ''.join(link.splitlines()).replace('\'','"')
             link=''.join(link.splitlines()).replace('<i class="icon-new"></i>','')
