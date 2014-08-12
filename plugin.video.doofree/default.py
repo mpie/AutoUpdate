@@ -10,11 +10,11 @@ addon_handle = ''
 
 master_json = "https://raw.github.com/mpie/doofree/master/json/master.json"
 seesantv = "http://www.seesantv.com/seesantv_2014/"
-asia=["http://as11.seesantv.com/"]
+asia=["http://as2.seesantv.com/", "http://as11.seesantv.com/"]
 uk=["http://uk23.seesantv.com/", "http://uk24.seesantv.com/", "http://uk12.seesantv.com/", "http://uk13.seesantv.com/", "http://uk25.seesantv.com/", "http://uk1.seesantv.com/", "http://uk27.seesantv.com/"]
-us=["http://us14.seesantv.com/", "http://us15.seesantv.com/"]
+us=["http://us7.seesantv.com/", "http://us14.seesantv.com/", "http://us15.seesantv.com/"]
 asian=["http://as2.seesantv.com/"]
-thaiChannels=[18,27,17,15,8,84,4,14,38]
+thaiChannels=[18,27,17,15,8,84,4,14]
 chMovies=[92,98,93]
 logo = xbmc.translatePath('special://home/addons/plugin.video.doofree/icon.png')
 datapath = xbmc.translatePath(ADDON.getAddonInfo('profile'))
@@ -534,8 +534,8 @@ def getVideoUrl(name, url, channel):
     sd = channel + '/' + programId + '/' + date + '-' + programId + '.mp4'
     print sd
     #for host in xrange(1, 31):
-    for host in uk:
-        #fullurl = "http://uk" + str (host) + ".seesantv.com/" + path
+    for host in us:
+        #fullurl = "http://us" + str (host) + ".seesantv.com/" + path
         fullurl = host + hd
         found = exists(fullurl)
         if (found):
@@ -543,15 +543,16 @@ def getVideoUrl(name, url, channel):
             trySD = False
             break
     if (trySD and found==False):
-        for host in uk:
+        for host in us:
             fullurl = host + sd
+            print fullurl
             found = exists(fullurl)
             if (found):
                 xbmc.Player().play(fullurl, item)
                 break
-    if (found==False):
-        for host in us:
-            #fullurl = "http://us" + str (host) + ".seesantv.com/" + path
+    if (found==False): 
+        for host in uk:
+            #fullurl = "http://uk" + str (host) + ".seesantv.com/" + path
             fullurl = host + hd
             found = exists(fullurl)
             if (found):
@@ -559,9 +560,8 @@ def getVideoUrl(name, url, channel):
                 trySD = False
                 break
         if (trySD and found==False):
-            for host in us:
+            for host in uk:
                 fullurl = host + sd
-                print fullurl
                 found = exists(fullurl)
                 if (found):
                     xbmc.Player().play(fullurl, item)
