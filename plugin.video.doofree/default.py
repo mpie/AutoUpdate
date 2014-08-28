@@ -272,6 +272,69 @@ def resolve_yify(name, url):
     except Exception, e:
         print('**** Yify Error occured: %s' % e, ' url: %s' % url)
 
+def resolve_mightyupload(name, url):
+    from resources import jsunpack
+    try:
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving %s video...' % name)
+        dialog.update(0)
+        html = net().http_GET(url).content
+        if dialog.iscanceled(): return False
+        dialog.update(50)
+        embed=re.findall('<IFRAME SRC="(http://www.mightyupload.com/embed[^"]+?)"',html)
+        if embed:
+            html2 = net().http_GET(embed[0]).content
+            try:vid=re.findall("file: '([^']+?)',",html2)[0]
+            except:
+                r = re.findall(r'(eval\(function\(p,a,c,k,e,d\)\{while.+?)</script>',html2,re.M|re.DOTALL)
+                unpack=jsunpack.unpack(r[1])
+                vid=re.findall('<param name="src"value="(.+?)"/>',unpack)[0]
+            return vid
+        r = re.findall(r'name="(.+?)" value="?(.+?)"', html, re.I|re.M)
+        if r:
+            puzzle_img = os.path.join(datapath, "mightyupload_puzzle.png")
+            solvemedia = re.search('<iframe src="(http://api.solvemedia.com.+?)"', html)
+            if solvemedia:
+                html = net().http_GET(solvemedia.group(1)).content
+                hugekey=re.search('id="adcopy_challenge" value="(.+?)">', html).group(1)
+                open(puzzle_img, 'wb').write(net().http_GET("http://api.solvemedia.com%s" % re.search('img src="(.+?)"', html).group(1)).content)
+                img = xbmcgui.ControlImage(450,15,400,130, puzzle_img)
+                wdlg = xbmcgui.WindowDialog()
+                wdlg.addControl(img)
+                wdlg.show()
+
+                xbmc.sleep(3000)
+
+                kb = xbmc.Keyboard('', 'Type the letters in the image', False)
+                kb.doModal()
+                capcode = kb.getText()
+
+                if (kb.isConfirmed()):
+                    userInput = kb.getText()
+                    if userInput != '':
+                        solution = kb.getText()
+                    elif userInput == '':
+                        xbmc.executebuiltin("XBMC.Notification(No text entered, You must enter text in the image to access video,2000)")
+                        return False
+            post_data = {}
+            for name, value in r:
+                post_data[name] = value
+            post_data['referer'] = url
+            post_data['adcopy_response'] = solution
+            post_data['adcopy_challenge'] = hugekey
+            html = net().http_POST(url, post_data).content
+            if dialog.iscanceled(): return False
+            dialog.update(100)
+            r = re.findall(r'<a href=\"(.+?)(?=\">Download the file</a>)', html)
+            return r[0]
+        else:
+            logerror('***** File not found')
+            xbmc.executebuiltin("XBMC.Notification(File Not Found,DooFree,2000,"+elogo+")")
+            return False
+    except Exception, e:
+        logerror('DooFree: Resolve MightyUpload Error - '+str(e))
+        raise ResolverError(str(e),"MightyUpload")
+
 def setFile(path,content,force=False):
     if os.path.exists(path) and not force:
         return False
@@ -595,6 +658,8 @@ def play(name, vidurl, image, resolver):
         vidurl = resolve_mbox(name, vidurl)
     if resolver == 'firedrive':
         vidurl = resolve_firedrive(name, vidurl)
+    if resolver == 'mightyupload':
+        vidurl = resolve_mightyupload(name, vidurl)
     xbmc.Player().play(vidurl, item)
     
 def getParams():
