@@ -492,9 +492,9 @@ def INDEX(name, url, cat_id):
             for item in data['list']:
                 addLink(item['title'].encode("utf-8"), item['location'], 4, item['thumbnail'], item['resolver'])            
     else:
-        link = getContent(url)
-        link=''.join(link.splitlines()).replace('\'','"')
-        limatch=re.compile('<figure>(.+?)</a><figcaption>').findall(link)
+        #link = getContent(url)
+        #link=''.join(link.splitlines()).replace('\'','"')
+        #limatch=re.compile('<figure>(.+?)</a><figcaption>').findall(link)
 
         # grab content from underlying pages
         print url
