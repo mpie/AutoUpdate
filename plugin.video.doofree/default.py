@@ -495,7 +495,7 @@ def INDEX(name, url, cat_id):
         #link = getContent(url)
         #link=''.join(link.splitlines()).replace('\'','"')
         #limatch=re.compile('<figure>(.+?)</a><figcaption>').findall(link)
-
+        limatch = []
         # grab content from underlying pages
         print url
         catUrl = seesantv + 'program.php?id=' + str(cat_id)
