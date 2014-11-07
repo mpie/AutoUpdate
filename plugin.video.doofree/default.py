@@ -437,14 +437,14 @@ def addMboxTVDir(name, seasons, mode, cat_id):
 def addLink(name, url, mode, image, resolver):
     url = build_url({'mode': mode, 'name': name, 'url': url, 'image': image, 'resolver': resolver})
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=image)
-    item.setInfo(type="Video", infoLabels={ "Title": name })
+    item.setInfo(type="Video", infoLabels={ "Title": name, "OriginalTitle": name })
     ok = xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=item, isFolder=False)
     return ok
 
 def addThaiLink(name, url, mode, image, channel):
     url = build_url({'mode': mode, 'name': name.encode('iso-8859-11'), 'url': url, 'channel': channel, 'image': image})
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=image)
-    item.setInfo(type="Video", infoLabels={ "Title": name })
+    item.setInfo(type="Video", infoLabels={ "Title": name, "OriginalTitle": name })
     ok = xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=item, isFolder=False)
     return ok
 
@@ -582,7 +582,7 @@ def getVideoUrl(name, url, channel):
     dialog.create('Resolving', 'Resolving %s Link...' % name.decode('iso-8859-11'))
     dialog.update(0)
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
-    item.setInfo(type="Video", infoLabels={ "Title": name.decode('iso-8859-11') })
+    item.setInfo(type="Video", infoLabels={ "Title": name.decode('iso-8859-11'), "OriginalTitle": name.decode('iso-8859-11') })
     trySD = True
     
     programId = re.compile('program_id=(\d+)').findall(url)[0]
@@ -649,7 +649,7 @@ def getVideoUrl(name, url, channel):
     
 def play(name, vidurl, image, resolver):
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=image)
-    item.setInfo(type="Video", infoLabels={ "Title": name })
+    item.setInfo(type="Video", infoLabels={ "Title": name, "OriginalTitle": name })
     if resolver == 'yify':
         vidurl = resolve_yify(name, vidurl)
     if resolver == 'movreel':
