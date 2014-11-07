@@ -525,7 +525,7 @@ def getMboxEpisodes(name, cat_id, season):
     dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
     xbmc.executebuiltin("XBMC.Dialog.Close(busydialog,true)")
     for epinum,thumb in match:
-        addLink(name+' S'+season+'E'+epinum, 'http://mobapps.cc/api/serials/e/?h='+str(cat_id)+'&u='+str(season)+'&y='+epinum, 4, thumb.replace('\/','/'), 'mbox')
+        addLink(name+'.S'+season.zfill(2)+'E'+epinum.zfill(2), 'http://mobapps.cc/api/serials/e/?h='+str(cat_id)+'&u='+str(season)+'&y='+epinum, 4, thumb.replace('\/','/'), 'mbox')
         loadedLinks = loadedLinks + 1
         percent = (loadedLinks * 100)/totalLinks
         remaining_display = 'Episodes Cached :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
