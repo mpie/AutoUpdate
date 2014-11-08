@@ -582,7 +582,7 @@ def getVideoUrl(name, url, channel):
     dialog.create('Resolving', 'Resolving %s Link...' % name.decode('iso-8859-11'))
     dialog.update(0)
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
-    item.setInfo(type="Video", infoLabels={ "Title": name.decode('iso-8859-11'), "OriginalTitle": name.decode('iso-8859-11') })
+    item.setInfo(type="Video", infoLabels={ "Title": name.decode('iso-8859-11')})
     trySD = True
     
     programId = re.compile('program_id=(\d+)').findall(url)[0]
