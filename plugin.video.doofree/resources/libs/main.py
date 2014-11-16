@@ -155,81 +155,95 @@ def ErrorReport(e):
 ################################################################################ TV Shows Metahandler ##########################################################################################################
 
 def GETMETAEpiT(mname,thumb,desc):
-        originalName=mname
-        mname = removeColoredText(mname)
-        if selfAddon.getSetting("meta-view-tv") == "true":
-                setGrab()
-                mname = mname.replace('New Episode','').replace('Main Event','').replace('New Episodes','')
-                mname = mname.strip()
-                r = re.findall('(.+?)\ss(\d+)e(\d+)\s',mname + " ",re.I)
-                if not r: r = re.findall('(.+?)\sseason\s(\d+)\sepisode\s(\d+)\s',mname + " ",re.I)
-                if not r: r = re.findall('(.+?)\s(\d+)x(\d+)\s',mname + " ",re.I)
-                if r:
-                    for name,sea,epi in r:
-                        year=''
-                        name=name.replace(' US','').replace(' (US)','').replace(' (us)','').replace(' (uk Series)','').replace(' (UK)','').replace(' UK',' (UK)').replace(' AU','').replace(' AND',' &').replace(' And',' &').replace(' and',' &').replace(' 2013','').replace(' 2011','').replace(' 2012','').replace(' 2010','')
-                        if re.findall('twisted',name,re.I):
-                            year='2013'
-                        if re.findall('the newsroom',name,re.I):
-                            year='2012'
-                        metaq = grab.get_meta('tvshow',name,None,None,year)
-                        imdb=metaq['imdb_id']
-                        tit=metaq['title']
-                        year=metaq['year']
-                        epiname=''
-                else:
-                    metaq=''
-                    name=mname
-                    epiname=''
-                    sea=0
-                    epi=0
-                    imdb=''
-                    tit=''
-                    year=''
-                meta = grab.get_episode_meta(str(name),imdb, int(sea), int(epi))
-                print "Episode Mode: Name %s Season %s - Episode %s"%(str(name),str(sea),str(epi))
-                infoLabels = {'rating': meta['rating'],'duration': meta['duration'],'genre': meta['genre'],'mpaa':"rated %s"%meta['mpaa'],'premiered':meta['premiered'],
-                      'plot': meta['plot'],'title': meta['title'],'cover_url': meta['cover_url'],'overlay':meta['overlay'],'episode': meta['episode'],
-                              'season': meta['season'],'backdrop_url': meta['backdrop_url']}
-
-                if infoLabels['cover_url']=='':
-                        if metaq!='':
-                            thumb=metaq['cover_url']
-                            infoLabels['cover_url']=thumb
-
-                if infoLabels['backdrop_url']=='':
-                        fan=fanartimage
-                        infoLabels['backdrop_url']=fan
-                if infoLabels['cover_url']=='':
-                    if thumb=='':
-                        thumb=art+'/vidicon.png'
-                        infoLabels['cover_url']=thumb
-                    else:
-                        infoLabels['cover_url']=thumb
-                infoLabels['imdb_id']=imdb
-                if meta['overlay'] == 7:
-                   infoLabels['playcount'] = 1
-                else:
-                   infoLabels['playcount'] = 0
-
-                infoLabels['showtitle']=tit
-                infoLabels['year']=year
-                infoLabels['metaName']=infoLabels['title']
-                infoLabels['title']=originalName
-
+    originalName=mname
+    mname = removeColoredText(mname)
+    if selfAddon.getSetting("meta-view-tv") == "true":
+        setGrab()
+        mname = mname.replace('New Episode','').replace('Main Event','').replace('New Episodes','')
+        mname = mname.strip()
+        r = re.findall('(.+?)\ss(\d+)e(\d+)\s',mname + " ",re.I)
+        if not r: r = re.findall('(.+?)\sseason\s(\d+)\sepisode\s(\d+)\s',mname + " ",re.I)
+        if not r: r = re.findall('(.+?)\s(\d+)x(\d+)\s',mname + " ",re.I)
+        if r:
+            for name,sea,epi in r:
+                year=''
+                name=name.replace(' US','').replace(' (US)','').replace(' (us)','').replace(' (uk Series)','').replace(' (UK)','').replace(' UK',' (UK)').replace(' AU','').replace(' AND',' &').replace(' And',' &').replace(' and',' &').replace(' 2013','').replace(' 2011','').replace(' 2012','').replace(' 2010','')
+                if re.findall('twisted',name,re.I):
+                    year='2013'
+                if re.findall('the newsroom',name,re.I):
+                    year='2012'
+                metaq = grab.get_meta('tvshow',name,None,None,year)
+                imdb=metaq['imdb_id']
+                tit=metaq['title']
+                year=metaq['year']
+                epiname=''
         else:
-                fan=fanartimage
-                infoLabels = {'title': originalName,'metaName': mname,'cover_url': thumb,'backdrop_url': fan,'season': '','episode': '','year': '','plot': desc,'genre': '','imdb_id': ''}
+            metaq=''
+            name=mname
+            epiname=''
+            sea=0
+            epi=0
+            imdb=''
+            tit=''
+            year=''
+        meta = grab.get_episode_meta(str(name),imdb, int(sea), int(epi))
+        print "Episode Mode: Name %s Season %s - Episode %s"%(str(name),str(sea),str(epi))
+        infoLabels = {'rating': meta['rating'],'duration': meta['duration'],'genre': meta['genre'],'mpaa':"rated %s"%meta['mpaa'],'premiered':meta['premiered'],
+            'plot': meta['plot'],'title': meta['title'],'cover_url': meta['cover_url'],'overlay':meta['overlay'],'episode': meta['episode'].zfill(2),
+            'season': meta['season'],'backdrop_url': meta['backdrop_url']}
 
-        return infoLabels
+        if infoLabels['cover_url']=='':
+            if metaq!='':
+                thumb=metaq['cover_url']
+                infoLabels['cover_url']=thumb
+
+        if infoLabels['backdrop_url']=='':
+            fan=fanartimage
+            infoLabels['backdrop_url']=fan
+        if infoLabels['cover_url']=='':
+            if thumb=='':
+                thumb=art+'/vidicon.png'
+                infoLabels['cover_url']=thumb
+            else:
+                infoLabels['cover_url']=thumb
+        infoLabels['imdb_id']=imdb
+        if meta['overlay'] == 7:
+           infoLabels['playcount'] = 1
+        else:
+           infoLabels['playcount'] = 0
+
+        infoLabels['showtitle']=tit
+        infoLabels['year']=year
+        infoLabels['metaName']=infoLabels['title']
+        infoLabels['title']=originalName
+
+    else:
+        fan=fanartimage
+        mname = mname.replace('New Episode','').replace('Main Event','').replace('New Episodes','')
+        mname = mname.strip()
+        r = re.findall('(.+?)\ss(\d+)e(\d+)\s',mname + " ",re.I)
+        if not r: r = re.findall('(.+?)\sseason\s(\d+)\sepisode\s(\d+)\s',mname + " ",re.I)
+        if not r: r = re.findall('(.+?)\s(\d+)x(\d+)\s',mname + " ",re.I)
+        if r:
+            for name,sea,epi in r:
+                year=''
+                name=name + ' s' + sea.zfill(2) + 'e' + epi.zfill(2)
+        else:
+            name = mname
+            sea = ''
+            epi = ''
+        print name
+        infoLabels = {'title': originalName,'metaName': name,'cover_url': thumb,'backdrop_url': fan,'season': sea.zfill(2),'episode': epi.zfill(2),'year': '','plot': desc,'genre': '','imdb_id': ''}
+
+    return infoLabels
 ############################################################################### Playback resume/ mark as watched #################################################################################
 
 def WatchedCallback():
-        xbmc.log('%s: %s' % (selfAddon.addon.getAddonInfo('name'), 'Video completely watched.'), xbmc.LOGNOTICE)
-        videotype='movies'
-        setGrab()
-        grab.change_watched(videotype, name, iconimage, season='', episode='', year='', watched=7)
-        xbmc.executebuiltin("XBMC.Container.Refresh")
+    xbmc.log('%s: %s' % (selfAddon.addon.getAddonInfo('name'), 'Video completely watched.'), xbmc.LOGNOTICE)
+    videotype='movies'
+    setGrab()
+    grab.change_watched(videotype, name, iconimage, season='', episode='', year='', watched=7)
+    xbmc.executebuiltin("XBMC.Container.Refresh")
 
 def WatchedCallbackwithParams(video_type, title, imdb_id, season, episode, year):
     print "worked"
@@ -238,9 +252,9 @@ def WatchedCallbackwithParams(video_type, title, imdb_id, season, episode, year)
     xbmc.executebuiltin("XBMC.Container.Refresh")
 
 def ChangeWatched(imdb_id, videoType, name, season, episode, year='', watched='', refresh=False):
-        setGrab()
-        grab.change_watched(videoType, name, imdb_id, season=season, episode=episode, year=year, watched=watched)
-        xbmc.executebuiltin("XBMC.Container.Refresh")
+    setGrab()
+    grab.change_watched(videoType, name, imdb_id, season=season, episode=episode, year=year, watched=watched)
+    xbmc.executebuiltin("XBMC.Container.Refresh")
 
 def refresh_movie(vidtitle,imdb, year=''):
 
@@ -305,8 +319,6 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
     if 'http://api.video.mail.ru/videos/embed/' in url or mode==364:
         name=name.decode('windows-1251')
         plot=plot.decode('windows-1251')
-    print 'searchMeta:' + str(searchMeta)
-    print 'metaType:' + metaType
     if searchMeta:
         if metaType == 'TV':
             infoLabels = GETMETAEpiT(name,iconimage,plot)

@@ -784,7 +784,6 @@ elif mode==277:
 
 elif mode==278:
     from resources.libs.plugins import mbox
-    print ""+url
     mbox.LIST(url)
 
 elif mode==279:
@@ -798,8 +797,8 @@ elif mode==280:
 
 elif mode==281:
     from resources.libs.plugins import mbox
-    print ""+url
     mbox.EPISODES(name,url)
+    xbmc.executebuiltin('Container.SetViewMode(500)')
 
 elif mode==285:
     from resources.libs.plugins import mbox
