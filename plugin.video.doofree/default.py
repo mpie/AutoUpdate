@@ -488,7 +488,8 @@ def exists(url):
 
 def HOME():
     #main.addDir('New Movies','movies',285,'')
-    main.addDirHome('New Movies','http://www.movie25.so/movies/latest-hd-movies/',901,'')
+    main.addDir('Search Movies','supersearch',20,'')
+    main.addDirHome('New Movies','http://www.movie25.cm/movies/latest-hd-movies/',901,'')
     main.addDir('Tv Series','tv',285,'')
     url = ''
     data = parseJson(master_json)
@@ -685,7 +686,13 @@ def play(name, vidurl, image, resolver):
     if resolver == 'mightyupload':
         vidurl = resolve_mightyupload(name, vidurl)
     xbmc.Player().play(vidurl, item)
-    
+
+def getKeyboardInput():
+    keyboard = xbmc.Keyboard('')
+    keyboard.doModal()
+    if (keyboard.isConfirmed()):
+		return keyboard.getText()
+
 def getParams():
     param = []
     paramstring = sys.argv[2]
@@ -774,20 +781,27 @@ elif mode==4:
     play(name, url, image, resolver)
 elif mode==5:
     getMboxEpisodes(name, cat_id, season)
+elif mode==20:
+    from resources.libs import supersearch
+    search = getKeyboardInput()
+    result = supersearch.SEARCH(search, 'Movies')
+    xbmc.executebuiltin('Container.SetViewMode(500)')
 elif mode==901:
     from resources.libs import movie25
+    print 'movie25url:'+url
     movie25.LISTMOVIES(url)
     xbmc.executebuiltin('Container.SetViewMode(500)')
+elif mode==903:
+    from resources.libs import movie25
+    print ''+url
+    movie25.VIDEOLINKS(name,url)
+    xbmc.executebuiltin('Container.SetViewMode(50)')
 elif mode==905:
     from resources.libs import movie25
     movie25.PLAY(name,url)
 elif mode==911:
     from resources.libs import movie25
     movie25.GroupedHosts(name,url,iconimage)
-elif mode==933:
-    from resources.libs import movie25
-    movie25.VIDEOLINKS(name,url)
-    xbmc.executebuiltin('Container.SetViewMode(50)')
 elif mode==276:
     from resources.libs.plugins import mbox
     print ""+url

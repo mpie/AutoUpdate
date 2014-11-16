@@ -16,6 +16,55 @@ art = ''
 fanartimage = ''
 VERSION = str(selfAddon.getAddonInfo('version'))
 
+def updateSearchFile(searchQuery,searchType,defaultValue = '###',searchMsg = ''):
+    addToSearchHistory = True
+    searchpath=os.path.join(datapath,'Search')
+    if searchType == "TV":
+        searchHistoryFile = "SearchHistoryTv"
+        if not searchMsg: searchMsg = 'Search For TV Shows'
+    else:
+        searchHistoryFile = "SearchHistory25"
+        if not searchMsg: searchMsg = 'Search For Movies'
+    SearchFile=os.path.join(searchpath,searchHistoryFile)
+    searchQuery=urllib.unquote(searchQuery)
+    if not searchQuery or searchQuery == defaultValue:
+        searchQuery = ''
+        try: os.makedirs(searchpath)
+        except: pass
+        keyb = xbmc.Keyboard('', searchMsg )
+        keyb.doModal()
+        if (keyb.isConfirmed()):
+            searchQuery = keyb.getText()
+        else:
+            xbmcplugin.endOfDirectory(int(sys.argv[1]),False,False)
+            return False
+    else:
+        addToSearchHistory = False
+    searchQuery=urllib.quote(searchQuery)
+    if os.path.exists(SearchFile):
+        searchitems=re.compile('search="([^"]+?)",').findall(open(SearchFile,'r').read())
+        if searchitems.count(searchQuery) > 0: addToSearchHistory = True
+    if addToSearchHistory:
+        if not os.path.exists(SearchFile) and searchQuery != '':
+            open(SearchFile,'w').write('search="%s",'%searchQuery)
+        elif searchQuery != '':
+            open(SearchFile,'a').write('search="%s",'%searchQuery)
+        else: return False
+        searchitems=re.compile('search="([^"]+?)",').findall(open(SearchFile,'r').read())
+        rewriteSearchFile = False
+        if searchitems.count(searchQuery) > 1:
+            searchitems.remove(searchQuery)
+            rewriteSearchFile = True
+        if len(searchitems)>=10:
+            searchitems.remove(searchitems[0])
+            rewriteSearchFile = True
+        if rewriteSearchFile:
+            os.remove(SearchFile)
+            for searchitem in searchitems:
+                try: open(SearchFile,'a').write('search="%s",'%searchitem)
+                except: pass
+    return searchQuery
+
 def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie = None, data = None, cookiejar = False, log = True, headers = [], type = '',ua = False):
     import urllib2
     UserAgent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
@@ -407,6 +456,10 @@ def addDir(name,url,mode,iconimage,plot=''):
 def addDirHome(name,url,mode,iconimage):
     return addDirX(name,url,mode,iconimage,addToFavs=0)
 
+#supersearch movie
+def addPlayM(name,url,mode,iconimage,plot,fanart,dur,genre,year):
+    return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,isFolder=0,searchMeta=1,fav_t='Movies',fav_addon_t='Movie')
+
 def addPlayc(name,url,mode,iconimage,plot,fanart,dur,genre,year):
     return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,isFolder=0,addToFavs=0)
 
@@ -495,6 +548,10 @@ def addDirT(name,url,mode,iconimage,plot,fanart,dur,genre,year):
 #Movie25 hd movies
 def addDirb(name,url,mode,iconimage,fanart):
     return addDirX(name,url,mode,iconimage,'',fanart,addToFavs=0)
+
+#supersearch movie25
+def addDirM(name,url,mode,iconimage,plot,fanart,dur,genre,year,imdb=''):
+    return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,imdb,searchMeta=1,fav_t='Movies',fav_addon_t='Movie')
 
 #Add diff source links
 def addLink(name,url,iconimage):

@@ -5,7 +5,7 @@ import main
 addon_id = 'plugin.video.doofree'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 art = main.art
-MainUrl='http://www.movie25.so'
+MainUrl='http://www.movie25.cm'
 prettyName='Movie25'
 
 def LISTMOVIES(murl):
@@ -22,7 +22,7 @@ def LISTMOVIES(murl):
     for url,thumb,name,genre,views,votes in match:
         votes=votes.replace('(','')
         name=name.replace('-','').replace('&','').replace('acute;','').strip()
-        main.addInfo(name+'[COLOR blue] Views: '+views+'[/COLOR] [COLOR red]Votes: '+votes+'[/COLOR]',MainUrl+url,933,thumb,genre,'')
+        main.addInfo(name+'[COLOR blue] Views: '+views+'[/COLOR] [COLOR red]Votes: '+votes+'[/COLOR]',MainUrl+url,903,thumb,genre,'')
         loadedLinks = loadedLinks + 1
         percent = (loadedLinks * 100)/totalLinks
         remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -47,20 +47,20 @@ def LISTMOVIES(murl):
     xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
 
 def UFCMOVIE25():
-    surl='http://www.movie25.so/search.php?key=ufc&submit='
+    surl='http://www.movie25.cm/search.php?key=ufc&submit='
     link=main.OPENURL(surl)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    match=re.compile('<div class="movie_pic"><a href="(.+?)" target=".+?">                            <img src="(.+?)" width=".+?" height=".+?" />                            </a></div>            <div class=".+?">              <div class=".+?">                <h1><a href=".+?" target=".+?">                  (.+?)                  </a></h1>                <div class=".+?">Genre:                  <a href=".+?" target=\'.+?\'>(.+?)</a>.+?Release:.+?Views: <span>                (.+?)                </span>.+?<span id=RateCount.+?>                (.+?)                </span> votes.+?<div id=".+?">score:<span id=Rate_.+?>(.+?)</span>').findall(link)
+    match=re.compile('<div class="movie_pic"><a href="(.+?)" target=".+?">                            <img src="(.+?)" width=".+?" height=".+?" />                            </a></div>            <div class=".+?">              <div class=".+?">                <h1><a href=".+?" target=".+?">                  (.+?)                  </a></h1>                <div class=".+?">Genre:                  <a href=".+?" target=\'.+?\'>(.+?)</a>.+?Release:.+?Views: <span>                (.+?)                </span>.+?<span id=RateCount.+?>                (.+?)                </span> votes.+?>').findall(link)
     dialogWait = xbmcgui.DialogProgress()
     ret = dialogWait.create('Please wait until Movie list is cached.')
     totalLinks = len(match)
     loadedLinks = 0
     remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
     dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
-    for url,thumb,name,genre,views,votes,rating in match:
+    for url,thumb,name,genre,views,votes in match:
         name=name.replace('-','').replace('&','').replace('acute;','').strip()
         furl= MainUrl+url
-        main.addInfo(name+'('+year+')[COLOR blue] Views: '+views+'[/COLOR] [COLOR red]Votes: '+votes+'[/COLOR] [COLOR green]Rating: '+rating+'/5.00[/COLOR]',furl,933,thumb,genre,'')
+        main.addInfo(name+'('+year+')',furl,903,thumb,genre,'')
         loadedLinks = loadedLinks + 1
         percent = (loadedLinks * 100)/totalLinks
         remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -68,7 +68,7 @@ def UFCMOVIE25():
         if dialogWait.iscanceled(): return False
     dialogWait.close()
     del dialogWait
-    main.addDir('[COLOR blue]Page 2[/COLOR]','http://www.movie25.so/search.php?page=2&key=ufc',9,art+'/next2.png')
+    main.addDir('[COLOR blue]Page 2[/COLOR]','http://www.movie25.cm/search.php?page=2&key=ufc',9,art+'/next2.png')
 
 def Searchhistory():
     seapath=os.path.join(main.datapath,'Search')
@@ -91,11 +91,11 @@ def superSearch(encode,type):
         surl=MainUrl+'/search.php?key='+encode+'&submit='
         link=main.OPENURL(surl,verbose=False)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class="movie_pic"><a href="(.+?)" target=".+?">    <img src="(.+?)" width=".+?" height=".+?" />.+?<a href=".+?" target=".+?">(.+?)</a></h1><div class=".+?">Genre:  <a href=".+?" target=\'.+?\'>(.+?)</a>.+?Release:.+?<br/>Views: <span>(.+?)</span>.+?id=RateCount_.+?>(.+?)</span> votes.+?>score:(.+?)</div>',re.DOTALL).findall(link)
-        for url,thumb,name,genre,views,votes,rating in match:
+        match=re.compile('<div class="movie_pic"><a href="(.+?)" target=".+?">    <img src="(.+?)" width=".+?" height=".+?" />.+?<a href=".+?" target=".+?">(.+?)</a></h1><div class=".+?">Genre:  <a href=".+?" target=\'.+?\'>(.+?)</a>.+?Release:.+?<br/>Views: <span>(.+?)</span>.+?id=RateCount_.+?>(.+?)</span> votes.+?>',re.DOTALL).findall(link)
+        for url,thumb,name,genre,views,votes in match:
             url= MainUrl+url
             name=name.replace('  ','')
-            returnList.append((name,prettyName,url,thumb,933,True))
+            returnList.append((name,prettyName,url,thumb,903,True))
         return returnList
     except: return []
 
@@ -105,7 +105,7 @@ def SEARCH(murl = ''):
     surl=MainUrl+'/search.php?key='+encode+'&submit='
     link=main.OPENURL(surl)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    match=re.compile('<div class="movie_pic"><a href="(.+?)" target=".+?">    <img src="(.+?)" width=".+?" height=".+?" />.+?<a href=".+?" target=".+?">(.+?)</a></h1><div class=".+?">Genre:  <a href=".+?" target=\'.+?\'>(.+?)</a>.+?Release:.+?<br/>Views: <span>(.+?)</span>.+?id=RateCount_.+?>(.+?)</span> votes.+?>score:(.+?)</div>').findall(link)
+    match=re.compile('<div class="movie_pic"><a href="(.+?)" target=".+?">    <img src="(.+?)" width=".+?" height=".+?" />.+?<a href=".+?" target=".+?">(.+?)</a></h1><div class=".+?">Genre:  <a href=".+?" target=\'.+?\'>(.+?)</a>.+?Release:.+?<br/>Views: <span>(.+?)</span>.+?id=RateCount_.+?>(.+?)</span> votes.+?>').findall(link)
     dialogWait = xbmcgui.DialogProgress()
     ret = dialogWait.create('Please wait until Movie list is cached.')
     totalLinks = len(match)
@@ -113,10 +113,10 @@ def SEARCH(murl = ''):
     remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
     dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
     xbmc.executebuiltin("XBMC.Dialog.Close(busydialog,true)")
-    for url,thumb,name,genre,views,votes,rating in match:
+    for url,thumb,name,genre,views,votes in match:
         name=name.replace('-','').replace('&','').replace('acute;','')
         furl= MainUrl+url
-        main.addInfo(name+'[COLOR blue] Views: '+views+'[/COLOR] [COLOR red]Votes: '+votes+'[/COLOR] [COLOR green]Rating: '+rating+'/5.00[/COLOR]',furl,933,thumb,genre,'')
+        main.addInfo(name,furl,903,thumb,genre,'')
         loadedLinks = loadedLinks + 1
         percent = (loadedLinks * 100)/totalLinks
         remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -128,9 +128,9 @@ def SEARCH(murl = ''):
     if exist:
         r = re.findall(""">Next</a><a href='search.php.?page=([^<]+)&key=.+?'>Last</a>""",link)
         if r:
-            main.addDir('[COLOR blue]Page 1 of '+r[0]+'[/COLOR]','http://www.movie25.so/search.php?page=2&key='+encode,909,art+'/next2.png')
+            main.addDir('[COLOR blue]Page 1 of '+r[0]+'[/COLOR]','http://www.movie25.cm/search.php?page=2&key='+encode,909,art+'/next2.png')
         else:
-            main.addDir('[COLOR blue]Page 1[/COLOR]','http://www.movie25.so/search.php?page=2&key='+encode,909,art+'/next2.png')
+            main.addDir('[COLOR blue]Page 1[/COLOR]','http://www.movie25.cm/search.php?page=2&key='+encode,909,art+'/next2.png')
     xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
 
 
@@ -140,7 +140,7 @@ def ENTYEAR():
     if d:
         encode=urllib.quote(d)
         if encode < '2014' and encode > '1900':
-            surl='http://www.movie25.so/search.php?year='+encode+'/'
+            surl='http://www.movie25.cm/search.php?year='+encode+'/'
             YEARB(surl)
         else:
             dialog = xbmcgui.Dialog()
@@ -191,17 +191,17 @@ def GotoPageB(url):
 def YEARB(murl):
     link=main.OPENURL(murl)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    match=re.compile('<div class="movie_pic"><a href="(.+?)" target=".+?">    <img src="(.+?)" width=".+?" height=".+?" />.+?<a href=".+?" target=".+?">(.+?)</a></h1><div class=".+?">Genre:  <a href=".+?" target=\'.+?\'>(.+?)</a>.+?Release:.+?<br/>Views: <span>(.+?)</span>.+?id=RateCount_.+?>(.+?)</span> votes.+?>score:(.+?)</div>').findall(link)
+    match=re.compile('<div class="movie_pic"><a href="(.+?)" target=".+?">    <img src="(.+?)" width=".+?" height=".+?" />.+?<a href=".+?" target=".+?">(.+?)</a></h1><div class=".+?">Genre:  <a href=".+?" target=\'.+?\'>(.+?)</a>.+?Release:.+?<br/>Views: <span>(.+?)</span>.+?id=RateCount_.+?>(.+?)</span> votes.+?>').findall(link)
     dialogWait = xbmcgui.DialogProgress()
     ret = dialogWait.create('Please wait until Movie list is cached.')
     totalLinks = len(match)
     loadedLinks = 0
     remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
     dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
-    for url,thumb,name,genre,views,votes,rating in match:
+    for url,thumb,name,genre,views,votes in match:
         name=name.replace('-','').replace('&','').replace('acute;','')
         furl= 'http://movie25.com/'+url
-        main.addInfo(name+'[COLOR blue] Views: '+views+'[/COLOR] [COLOR red]Votes: '+votes+'[/COLOR] [COLOR green]Rating: '+rating+'/5.00[/COLOR]',furl,933,thumb,genre,'')
+        main.addInfo(name,furl,903,thumb,genre,'')
         loadedLinks = loadedLinks + 1
         percent = (loadedLinks * 100)/totalLinks
         remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -213,9 +213,9 @@ def YEARB(murl):
     r = re.findall("Next</a><a href='search.php.?page=([^<]+)&year=.+?'>Last</a>",link)
     if r:
         main.addDir('[COLOR red]Enter Page #[/COLOR]',murl,208,art+'/gotopage.png')
-        main.addDir('[COLOR blue]Page 1 of '+r[0]+'[/COLOR]','http://www.movie25.so/search.php?page=2&year='+str(ye),909,art+'/next2.png')
+        main.addDir('[COLOR blue]Page 1 of '+r[0]+'[/COLOR]','http://www.movie25.cm/search.php?page=2&year='+str(ye),909,art+'/next2.png')
     else:
-        main.addDir('[COLOR blue]Page 1[/COLOR]','http://www.movie25.so/search.php?page=2&year='+str(ye),909,art+'/next2.png')
+        main.addDir('[COLOR blue]Page 1[/COLOR]','http://www.movie25.cm/search.php?page=2&year='+str(ye),909,art+'/next2.png')
 
     xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
     main.VIEWS()
@@ -223,17 +223,17 @@ def YEARB(murl):
 def NEXTPAGE(murl):
     link=main.OPENURL(murl)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    match=re.compile('<div class="movie_pic"><a href="(.+?)" target=".+?">    <img src="(.+?)" width=".+?" height=".+?" />.+?<a href=".+?" target=".+?">(.+?)</a></h1><div class=".+?">Genre:  <a href=".+?" target=\'.+?\'>(.+?)</a>.+?Release:.+?<br/>Views: <span>(.+?)</span>.+?id=RateCount_.+?>(.+?)</span> votes.+?>score:(.+?)</div>').findall(link)
+    match=re.compile('<div class="movie_pic"><a href="(.+?)" target=".+?">    <img src="(.+?)" width=".+?" height=".+?" />.+?<a href=".+?" target=".+?">(.+?)</a></h1><div class=".+?">Genre:  <a href=".+?" target=\'.+?\'>(.+?)</a>.+?Release:.+?<br/>Views: <span>(.+?)</span>.+?id=RateCount_.+?>(.+?)</span> votes.+?>').findall(link)
     dialogWait = xbmcgui.DialogProgress()
     ret = dialogWait.create('Please wait until Movie list is cached.')
     totalLinks = len(match)
     loadedLinks = 0
     remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
     dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
-    for url,thumb,name,genre,views,votes,rating in match:
+    for url,thumb,name,genre,views,votes in match:
         name=name.replace('-','').replace('&','').replace('acute;','')
         furl= MainUrl+url
-        main.addInfo(name+'[COLOR blue] Views: '+views+'[/COLOR] [COLOR red]Votes: '+votes+'[/COLOR] [COLOR green]Rating: '+rating+'/5.00[/COLOR]',furl,933,thumb,genre,'')
+        main.addInfo(name,furl,903,thumb,genre,'')
         loadedLinks = loadedLinks + 1
         percent = (loadedLinks * 100)/totalLinks
         remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -242,13 +242,13 @@ def NEXTPAGE(murl):
     dialogWait.close()
     del dialogWait
 
-    matchx=re.compile('http://www.movie25.so/search.php.+?page=(.+?)&year=(.+?)').findall(murl)
+    matchx=re.compile('http://www.movie25.cm/search.php.+?page=(.+?)&year=(.+?)').findall(murl)
     if len(matchx)>0:
         durl = murl + '/'
-        paginate=re.compile('http://www.movie25.so/search.php.+?page=(.+?)&year=(.+?)/').findall(durl)
+        paginate=re.compile('http://www.movie25.cm/search.php.+?page=(.+?)&year=(.+?)/').findall(durl)
         for page, yearb in paginate:
             pgs = int(page)+1
-            jurl='http://www.movie25.so/search.php?page='+str(pgs)+'&year='+str(yearb)
+            jurl='http://www.movie25.cmsearch.php?page='+str(pgs)+'&year='+str(yearb)
 #                 main.addDir('[COLOR red]Home[/COLOR]','',0,art+'/home.png')
         r = re.findall("Next</a><a href='search.php.?page=([^<]+)&year=.+?'>Last</a>",link)
         if r:
@@ -260,10 +260,10 @@ def NEXTPAGE(murl):
         main.VIEWS()
     else:
         durl = murl + '/'
-        paginate=re.compile('http://www.movie25.so/search.php.+?page=(.+?)&key=(.+?)/').findall(durl)
+        paginate=re.compile('http://www.movie25.cm/search.php.+?page=(.+?)&key=(.+?)/').findall(durl)
         for page, search in paginate:
             pgs = int(page)+1
-            jurl='http://www.movie25.so/search.php?page='+str(pgs)+'&key='+str(search)
+            jurl='http://www.movie25.cm/search.php?page='+str(pgs)+'&key='+str(search)
 #                 main.addDir('[COLOR red]Home[/COLOR]','',0,art+'/home.png')
         r = re.findall(""">Next</a><a href='search.php.?page=([^<]+)&key=.+?'>Last</a>""",link)
         if r:
@@ -284,7 +284,7 @@ def VIDEOLINKS(name,url):
     for d in all: all_coll[d[0]].append(d[1])
     all_coll = all_coll.items()
     #sortorder = "mightyupload,putlocker,sockshare,billionuploads,hugefiles,movreel,lemuploads,180upload,megarelease,filenuke,flashx,gorillavid,bayfiles,veehd,vidto,epicshare,2gbhosting,alldebrid,allmyvideos,castamp,cheesestream,clicktoview,crunchyroll,cyberlocker,daclips,dailymotion,divxstage,donevideo,ecostream,entroupload,facebook,filebox,hostingbulk,hostingcup,jumbofiles,limevideo,movdivx,movpod,movshare,movzap,muchshare,nolimitvideo,nosvideo,novamov,nowvideo,ovfile,play44_net,played,playwire,premiumize_me,primeshare,promptfile,purevid,rapidvideo,realdebrid,rpnet,seeon,sharefiles,sharerepo,sharesix,skyload,stagevu,stream2k,streamcloud,thefile,tubeplus,tunepk,ufliq,upbulk,uploadc,uploadcrazynet,veoh,vidbull,vidcrazynet,video44,videobb,videofun,videotanker,videoweed,videozed,videozer,vidhog,vidpe,vidplay,vidstream,vidup_org,vidx,vidxden,vidzur,vimeo,vureel,watchfreeinhd,xvidstage,yourupload,youtube,youwatch,zalaa,zooupload,zshare,"
-    sortorder = "mightyupload,putlocker,sockshare,billionuploads,movreel,lemuploads,180upload,"
+    sortorder = "mightyupload,movreel,lemuploads,180upload,hugefiles,"
     sortorder = ','.join((sortorder.split(',')[::-1]))
     all_coll = sorted(all_coll, key=lambda word: sortorder.find(word[0].lower())*-1)
     for host,urls in all_coll:
@@ -332,7 +332,7 @@ def PLAY(name,murl):
         if selfAddon.getSetting("whistory") == "true":
             from resources.universal import watchhistory
             wh = watchhistory.WatchHistory('plugin.video.movie25')
-            wh.add_item(hname+' '+'[COLOR green]Movie25[/COLOR]', sys.argv[0]+sys.argv[2], infolabels=infolabels, img=img, fanart=fanart, is_folder=False)
+            wh.add_item(hname, sys.argv[0]+sys.argv[2], infolabels=infolabels, img=img, fanart=fanart, is_folder=False)
         player.KeepAlive()
         return ok
     except Exception, e:
@@ -366,7 +366,7 @@ def PLAYB(name,murl):
         if selfAddon.getSetting("whistory") == "true":
             from resources.universal import watchhistory
             wh = watchhistory.WatchHistory('plugin.video.movie25')
-            wh.add_item(hname+' '+'[COLOR green]Movie25[/COLOR]', sys.argv[0]+sys.argv[2], infolabels=infolabels, img=img, fanart=fanart, is_folder=False)
+            wh.add_item(hname, sys.argv[0]+sys.argv[2], infolabels=infolabels, img=img, fanart=fanart, is_folder=False)
         player.KeepAlive()
         return ok
     except Exception, e:
