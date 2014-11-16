@@ -52,7 +52,7 @@ def LIST(type):
     ret = dialogWait.create('Please wait until Content list is cached.')
     # override totalLinks and return the latest 54 movies only
     if 'movies' in type:
-        totalLinks = 79
+        totalLinks = 54
     else:
         totalLinks = len(field)
     loadedLinks = 0
