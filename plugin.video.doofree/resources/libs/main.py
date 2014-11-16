@@ -7,6 +7,7 @@ selfAddon = xbmcaddon.Addon(id=addon_id)
 doofreepath = selfAddon.getAddonInfo('path')
 grab = None
 fav = False
+elogo = xbmc.translatePath('special://home/addons/plugin.video.doofree/icon.png')
 hostlist = None
 Dir = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.doofree', ''))
 datapath = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
@@ -490,8 +491,28 @@ def addDirMs(name,url,mode,iconimage,plot,fanart,dur,genre,year):
 #TV
 def addDirT(name,url,mode,iconimage,plot,fanart,dur,genre,year):
     return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,fav_t='TV',fav_addon_t='TV Show',fav_sub_t='Shows')
+
+#Movie25 hd movies
+def addDirb(name,url,mode,iconimage,fanart):
+    return addDirX(name,url,mode,iconimage,'',fanart,addToFavs=0)
+
+#Add diff source links
+def addLink(name,url,iconimage):
+    liz=xbmcgui.ListItem(name, iconImage=art+'/link.png', thumbnailImage=iconimage)
+    liz.setInfo( type="Video", infoLabels={ "Title": name } )
+    liz.setProperty('fanart_image', fanartimage)
+    return xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=liz)
+
+def addDown2(name,url,mode,iconimage,fanart):
+    id='plugin.video.movie25'
+    return addDirX(name,url,mode,iconimage,'',fanart,isFolder=0,addToFavs=0,id=id,down=1)
 ############################################################################### Resolvers ############################################################################################
 def resolve_url(url,filename = False):
     import resolvers
     return resolvers.resolve_url(url,filename)
+
+############################################################################### Other stuff ##########################################################################################
+def addInfo(name,url,mode,iconimage,genre,year):
+    mi = [('Search Movie25','XBMC.Container.Update(%s?mode=4&url=%s)'% (sys.argv[0],'###'))]
+    return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='Movie25',menuItemPos=0,menuItems=mi)
 

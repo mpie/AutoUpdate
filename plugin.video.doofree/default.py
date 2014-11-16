@@ -17,6 +17,7 @@ asian=["http://as2.seesantv.com/"]
 thaiChannels=[18,27,17,15,8,84,4,14]
 chMovies=[92,98,93]
 logo = xbmc.translatePath('special://home/addons/plugin.video.doofree/icon.png')
+elogo = xbmc.translatePath('special://home/addons/plugin.video.doofree/icon.png')
 datapath = xbmc.translatePath(ADDON.getAddonInfo('profile'))
 UpdatePath=os.path.join(datapath,'Update')
 useragent = 'android-async-http/1.4.1 (http://loopj.com/android-async-http)'
@@ -486,7 +487,8 @@ def exists(url):
         return False
 
 def HOME():
-    main.addDir('New Movies','movies',285,'')
+    #main.addDir('New Movies','movies',285,'')
+    main.addDirHome('New Movies','http://www.movie25.so/movies/latest-hd-movies/',901,'')
     main.addDir('Tv Series','tv',285,'')
     url = ''
     data = parseJson(master_json)
@@ -772,6 +774,20 @@ elif mode==4:
     play(name, url, image, resolver)
 elif mode==5:
     getMboxEpisodes(name, cat_id, season)
+elif mode==901:
+    from resources.libs import movie25
+    movie25.LISTMOVIES(url)
+    xbmc.executebuiltin('Container.SetViewMode(500)')
+elif mode==905:
+    from resources.libs import movie25
+    movie25.PLAY(name,url)
+elif mode==911:
+    from resources.libs import movie25
+    movie25.GroupedHosts(name,url,iconimage)
+elif mode==933:
+    from resources.libs import movie25
+    movie25.VIDEOLINKS(name,url)
+    xbmc.executebuiltin('Container.SetViewMode(50)')
 elif mode==276:
     from resources.libs.plugins import mbox
     print ""+url
