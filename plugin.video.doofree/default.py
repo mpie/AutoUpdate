@@ -24,6 +24,26 @@ useragent = 'android-async-http/1.4.1 (http://loopj.com/android-async-http)'
 try: os.makedirs(UpdatePath)
 except: pass
 
+try:
+    from resources.libs import main  
+except Exception, e:
+    dialog = xbmcgui.Dialog()
+    ok=dialog.ok('[B][COLOR=FF67cc33]Doofree Import Error[/COLOR][/B]','Failed To Import Needed Modules',str(e),'Main and Settings module')
+    xbmc.log('Doofree ERROR - Importing Modules: '+str(e), xbmc.LOGERROR)
+
+UpdatePath=os.path.join(main.datapath,'Update')
+try: os.makedirs(UpdatePath)
+except: pass
+CachePath=os.path.join(main.datapath,'Cache')
+try: os.makedirs(CachePath)
+except: pass
+CookiesPath=os.path.join(main.datapath,'Cookies')
+try: os.makedirs(CookiesPath)
+except: pass
+TempPath=os.path.join(main.datapath,'Temp')
+try: os.makedirs(TempPath)
+except: pass
+
 base_url = sys.argv[0]
 addon_handle = int(sys.argv[1])
 
@@ -466,6 +486,8 @@ def exists(url):
         return False
 
 def HOME():
+    main.addDir('New Movies','movies',285,'')
+    main.addDir('Tv Series','tv',285,'')
     url = ''
     data = parseJson(master_json)
     for item in data['Home']:
@@ -689,6 +711,7 @@ playpath=None
 image=None
 cat_id=None
 resolver=None
+iconimage=None
 try:
     url=urllib.unquote_plus(params['url'])
 except:
@@ -729,6 +752,10 @@ try:
     season=params['season']
 except:
     pass
+try:
+    iconimage=params['iconimage']
+except:
+    pass
 
 sysarg=str(sys.argv[1])
 if mode==None or url==None or len(url)<1:
@@ -745,4 +772,50 @@ elif mode==4:
     play(name, url, image, resolver)
 elif mode==5:
     getMboxEpisodes(name, cat_id, season)
+elif mode==276:
+    from resources.libs.plugins import mbox
+    print ""+url
+    mbox.MAIN()
+
+elif mode==277:
+    from resources.libs.plugins import mbox
+    print ""+url
+    mbox.MOVIES()
+
+elif mode==278:
+    from resources.libs.plugins import mbox
+    print ""+url
+    mbox.LIST(url)
+
+elif mode==279:
+    from resources.libs.plugins import mbox
+    mbox.PLAY(name,url,iconimage)
+
+elif mode==280:
+    from resources.libs.plugins import mbox
+    print ""+url
+    mbox.SEASONS(name,url)
+
+elif mode==281:
+    from resources.libs.plugins import mbox
+    print ""+url
+    mbox.EPISODES(name,url)
+
+elif mode==285:
+    from resources.libs.plugins import mbox
+    print ""+url
+    mbox.DownloadAndList(url)
+
+elif mode==302:
+    from resources.libs.plugins import mbox
+    print ""+url
+    mbox.MUSICLIST(name,url)
+
+    main.jDownloader(url)
+elif mode == 777:
+    main.ChangeWatched(iconimage, url, name, '', '')
+elif mode == 778:
+    main.refresh_movie(name,iconimage)
+elif mode == 782:
+    main.TRAILERSEARCH(url, name, iconimage)
 xbmcplugin.endOfDirectory(addon_handle)
