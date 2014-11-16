@@ -284,7 +284,7 @@ def VIDEOLINKS(name,url):
     for d in all: all_coll[d[0]].append(d[1])
     all_coll = all_coll.items()
     #sortorder = "mightyupload,putlocker,sockshare,billionuploads,hugefiles,movreel,lemuploads,180upload,megarelease,filenuke,flashx,gorillavid,bayfiles,veehd,vidto,epicshare,2gbhosting,alldebrid,allmyvideos,castamp,cheesestream,clicktoview,crunchyroll,cyberlocker,daclips,dailymotion,divxstage,donevideo,ecostream,entroupload,facebook,filebox,hostingbulk,hostingcup,jumbofiles,limevideo,movdivx,movpod,movshare,movzap,muchshare,nolimitvideo,nosvideo,novamov,nowvideo,ovfile,play44_net,played,playwire,premiumize_me,primeshare,promptfile,purevid,rapidvideo,realdebrid,rpnet,seeon,sharefiles,sharerepo,sharesix,skyload,stagevu,stream2k,streamcloud,thefile,tubeplus,tunepk,ufliq,upbulk,uploadc,uploadcrazynet,veoh,vidbull,vidcrazynet,video44,videobb,videofun,videotanker,videoweed,videozed,videozer,vidhog,vidpe,vidplay,vidstream,vidup_org,vidx,vidxden,vidzur,vimeo,vureel,watchfreeinhd,xvidstage,yourupload,youtube,youwatch,zalaa,zooupload,zshare,"
-    sortorder = "mightyupload,movreel,lemuploads,180upload,hugefiles,"
+    sortorder = "mightyupload,nowvideo,putlocker,movreel,lemuploads,180upload,hugefiles,"
     sortorder = ','.join((sortorder.split(',')[::-1]))
     all_coll = sorted(all_coll, key=lambda word: sortorder.find(word[0].lower())*-1)
     for host,urls in all_coll:
