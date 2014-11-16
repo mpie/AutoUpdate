@@ -489,6 +489,7 @@ def exists(url):
 def HOME():
     #main.addDir('New Movies','movies',285,'')
     main.addDir('Search Movies','supersearch',20,'')
+    main.addDir('Search Tv Series','supersearch',21,'')
     main.addDirHome('New Movies','http://www.movie25.cm/movies/latest-hd-movies/',901,'')
     main.addDir('Tv Series','tv',285,'')
     url = ''
@@ -785,6 +786,11 @@ elif mode==20:
     from resources.libs import supersearch
     search = getKeyboardInput()
     result = supersearch.SEARCH(search, 'Movies')
+    xbmc.executebuiltin('Container.SetViewMode(500)')
+elif mode==21:
+    from resources.libs import supersearch
+    search = getKeyboardInput()
+    result = supersearch.SEARCH(search, 'Tv')
     xbmc.executebuiltin('Container.SetViewMode(500)')
 elif mode==901:
     from resources.libs import movie25
