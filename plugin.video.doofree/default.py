@@ -792,8 +792,8 @@ elif mode==279:
 
 elif mode==280:
     from resources.libs.plugins import mbox
-    print ""+url
     mbox.SEASONS(name,url)
+    xbmc.executebuiltin('Container.SetViewMode(50)')
 
 elif mode==281:
     from resources.libs.plugins import mbox
