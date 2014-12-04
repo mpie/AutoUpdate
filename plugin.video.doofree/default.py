@@ -532,7 +532,7 @@ def INDEX(name, url, cat_id):
             pageUrl = url + '&page=' + str(page)
             pageLink = getContent(pageUrl)
             pageLink=''.join(pageLink.splitlines()).replace('\'','"')             
-            limatch+=re.compile('<figure>(.+?)</a><figcaption>').findall(pageLink)
+            limatch+=re.compile('<figure>(.+?)</a></li>').findall(pageLink)
  
         for licontent in limatch:
             show=re.compile('<a href="(.+?)"><img src="(.+?)" alt="(.+?)">').findall(licontent)
