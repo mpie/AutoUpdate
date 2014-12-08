@@ -601,7 +601,8 @@ def getEpisodes(url, cat_id):
             episodes += re.compile('<a href="(.+?)" >(.+?)</a> </td>                           \t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t<a href="(.+?)" ><img').findall(episodematch[0])
     
     for episode in episodes:
-        addThaiLink(episode[1].decode('iso-8859-11'), seesantv + episode[0], 3, image, channel)
+        if (episode[1].find('(HD)') != -1 and (cat_id == 18 or cat_id == 27)) or (cat_id not in [18, 27]):
+            addThaiLink(episode[1].decode('iso-8859-11'), seesantv + episode[0], 3, image, channel)
 
 def getVideoUrl(name, url, channel):
     dialog = xbmcgui.DialogProgress()
