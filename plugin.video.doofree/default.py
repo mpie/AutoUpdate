@@ -529,10 +529,12 @@ def INDEX(name, url, cat_id):
         pageContent = ''.join(pageContent.splitlines()).replace('\'','"')
         pageMatch=re.compile('id="a_page_(.+?)" href').findall(pageContent)
         for page in pageMatch:
-            pageUrl = url + '&page=' + str(page)
-            pageLink = getContent(pageUrl)
-            pageLink=''.join(pageLink.splitlines()).replace('\'','"')             
-            limatch+=re.compile('<figure>(.+?)</a></li>').findall(pageLink)
+            if (page.isdigit()):
+                pageUrl = url + '&page=' + str(page)
+                print pageUrl
+                pageLink = getContent(pageUrl)
+                pageLink=''.join(pageLink.splitlines()).replace('\'','"')
+                limatch+=re.compile('<figure>(.+?)</a></li>').findall(pageLink)
  
         for licontent in limatch:
             show=re.compile('<a href="(.+?)"><img src="(.+?)" alt="(.+?)">').findall(licontent)
