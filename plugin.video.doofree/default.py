@@ -591,7 +591,7 @@ def getEpisodes(url, cat_id):
         for page in pages:
             if (page == '3' and channel == 'chall'):
                 break
-            pag = int (page)
+            pag = int (page) - 1
             pageUrl = url + '&vdo_type=.mp4&page=' + str (pag)
             print pageUrl
             link = getContent(pageUrl)
@@ -673,6 +673,175 @@ def getVideoUrl(name, url, channel):
                 if (found):
                     xbmc.Player().play(fullurl, item)
                     break
+    # try chOneHd
+    if (found==False):
+        channel = 'chOneHD'
+        hd = channel + '/' + programId + '/' + date + '1-' + programId + '.mp4'
+        sd = channel + '/' + programId + '/' + date + '-' + programId + '.mp4'
+        print sd
+        #for host in xrange(1, 31):
+        for host in us:
+            #fullurl = "http://us" + str (host) + ".seesantv.com/" + path
+            fullurl = host + hd
+            found = exists(fullurl)
+            if (found):
+                xbmc.Player().play(fullurl,item)
+                trySD = False
+                break
+        if (trySD and found==False):
+            for host in us:
+                fullurl = host + sd
+                print fullurl
+                found = exists(fullurl)
+                if (found):
+                    xbmc.Player().play(fullurl, item)
+                    break
+        if (found==False):
+            for host in uk:
+                #fullurl = "http://uk" + str (host) + ".seesantv.com/" + path
+                fullurl = host + hd
+                found = exists(fullurl)
+                if (found):
+                    xbmc.Player().play(fullurl,item)
+                    trySD = False
+                    break
+            if (trySD and found==False):
+                for host in uk:
+                    fullurl = host + sd
+                    found = exists(fullurl)
+                    if (found):
+                        xbmc.Player().play(fullurl, item)
+                        break
+        if (found==False):
+            for host in asian:
+                #fullurl = "http://as" + str (host) + ".seesantv.com/" + path
+                fullurl = host + hd
+                print fullurl
+                found = exists(fullurl)
+                if (found):
+                    xbmc.Player().play(fullurl,item)
+                    trySD = False
+                    break
+            if (trySD and found==False):
+                for host in asian:
+                    fullurl = host + sd
+                    found = exists(fullurl)
+                    if (found):
+                        xbmc.Player().play(fullurl, item)
+                        break
+    # try chOneHd
+    if (found==False):
+        channel = 'chtrue4u'
+        hd = channel + '/' + programId + '/' + date + '1-' + programId + '.mp4'
+        sd = channel + '/' + programId + '/' + date + '-' + programId + '.mp4'
+        print sd
+        #for host in xrange(1, 31):
+        for host in us:
+            #fullurl = "http://us" + str (host) + ".seesantv.com/" + path
+            fullurl = host + hd
+            found = exists(fullurl)
+            if (found):
+                xbmc.Player().play(fullurl,item)
+                trySD = False
+                break
+        if (trySD and found==False):
+            for host in us:
+                fullurl = host + sd
+                print fullurl
+                found = exists(fullurl)
+                if (found):
+                    xbmc.Player().play(fullurl, item)
+                    break
+        if (found==False):
+            for host in uk:
+                #fullurl = "http://uk" + str (host) + ".seesantv.com/" + path
+                fullurl = host + hd
+                found = exists(fullurl)
+                if (found):
+                    xbmc.Player().play(fullurl,item)
+                    trySD = False
+                    break
+            if (trySD and found==False):
+                for host in uk:
+                    fullurl = host + sd
+                    found = exists(fullurl)
+                    if (found):
+                        xbmc.Player().play(fullurl, item)
+                        break
+        if (found==False):
+            for host in asian:
+                #fullurl = "http://as" + str (host) + ".seesantv.com/" + path
+                fullurl = host + hd
+                print fullurl
+                found = exists(fullurl)
+                if (found):
+                    xbmc.Player().play(fullurl,item)
+                    trySD = False
+                    break
+            if (trySD and found==False):
+                for host in asian:
+                    fullurl = host + sd
+                    found = exists(fullurl)
+                    if (found):
+                        xbmc.Player().play(fullurl, item)
+                        break
+
+    # try chOneHd
+        if (found==False):
+            channel = 'chworkpoint'
+            hd = channel + '/' + programId + '/' + date + '1-' + programId + '.mp4'
+            sd = channel + '/' + programId + '/' + date + '-' + programId + '.mp4'
+            print sd
+            #for host in xrange(1, 31):
+            for host in us:
+                #fullurl = "http://us" + str (host) + ".seesantv.com/" + path
+                fullurl = host + hd
+                found = exists(fullurl)
+                if (found):
+                    xbmc.Player().play(fullurl,item)
+                    trySD = False
+                    break
+            if (trySD and found==False):
+                for host in us:
+                    fullurl = host + sd
+                    print fullurl
+                    found = exists(fullurl)
+                    if (found):
+                        xbmc.Player().play(fullurl, item)
+                        break
+            if (found==False):
+                for host in uk:
+                    #fullurl = "http://uk" + str (host) + ".seesantv.com/" + path
+                    fullurl = host + hd
+                    found = exists(fullurl)
+                    if (found):
+                        xbmc.Player().play(fullurl,item)
+                        trySD = False
+                        break
+                if (trySD and found==False):
+                    for host in uk:
+                        fullurl = host + sd
+                        found = exists(fullurl)
+                        if (found):
+                            xbmc.Player().play(fullurl, item)
+                            break
+            if (found==False):
+                for host in asian:
+                    #fullurl = "http://as" + str (host) + ".seesantv.com/" + path
+                    fullurl = host + hd
+                    print fullurl
+                    found = exists(fullurl)
+                    if (found):
+                        xbmc.Player().play(fullurl,item)
+                        trySD = False
+                        break
+                if (trySD and found==False):
+                    for host in asian:
+                        fullurl = host + sd
+                        found = exists(fullurl)
+                        if (found):
+                            xbmc.Player().play(fullurl, item)
+                            break
     
 def play(name, vidurl, image, resolver):
     item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=image)
