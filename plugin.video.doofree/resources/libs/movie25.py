@@ -275,7 +275,7 @@ def VIDEOLINKS(name,url):
     link=main.OPENURL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
     all=re.compile('class="link_name">(.+?)</li>.+?playing_button"><a href="(.+?)".+?said_work">.+?(.+?)% said work</div>.+?good_bad').findall(link)
-    sortorder = "vodlocker,180upload,hugefiles,"
+    sortorder = "vodlocker"
     sortorder = ','.join((sortorder.split(',')[::-1]))
     for host,urls,percent in all:
         if host.strip().lower() in sortorder:
