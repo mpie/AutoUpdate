@@ -11,7 +11,8 @@ prettyName='Movie25'
 def LISTMOVIES(murl):
     link=main.OPENURL(murl)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    match = re.findall('movie_pic"><a href="([^"]+)"  target=".+?<img src="(.+?)".+?target="_self">([^<]+)</a>.+?>([^<]+)</a>.+?<br/>Views: <span>(.+?)</span>.+?(.+?)votes',link)
+    match = re.findall('movie_pic"><a href="(.+?)".+?title="(.+?)">.+?img src="(.+?)" width',link)
+    print match
     dialogWait = xbmcgui.DialogProgress()
     ret = dialogWait.create('Please wait until Movie list is cached.')
     totalLinks = len(match)
@@ -19,10 +20,9 @@ def LISTMOVIES(murl):
     remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
     dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
     xbmc.executebuiltin("XBMC.Dialog.Close(busydialog,true)")
-    for url,thumb,name,genre,views,votes in match:
-        votes=votes.replace('(','')
+    for url,name,thumb in match:
         name=name.replace('-','').replace('&','').replace('acute;','').strip()
-        main.addInfo(name+'[COLOR blue] Views: '+views+'[/COLOR] [COLOR red]Votes: '+votes+'[/COLOR]',MainUrl+url,903,thumb,genre,'')
+        main.addInfo(name,MainUrl+url,903,thumb,'','')
         loadedLinks = loadedLinks + 1
         percent = (loadedLinks * 100)/totalLinks
         remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -274,34 +274,24 @@ def NEXTPAGE(murl):
 def VIDEOLINKS(name,url):
     link=main.OPENURL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-    qual = re.compile('<h1 >Links - Quality\s*?([^\s]+?)\s*?</h1>').findall(link)
-    quality = str(qual)
-    quality = quality.replace("'","")
-    name  = name.split('[COLOR blue]')[0]
-    import collections
-    all=re.compile('<li class="link_name">\s*?([^<^\s]+?)\s*?</li>.+?<li class=".+?"><span><a href="([^"]+?)"').findall(link)
-    all_coll = collections.defaultdict(list)
-    for d in all: all_coll[d[0]].append(d[1])
-    all_coll = all_coll.items()
-    #sortorder = "mightyupload,putlocker,sockshare,billionuploads,hugefiles,movreel,lemuploads,180upload,megarelease,filenuke,flashx,gorillavid,bayfiles,veehd,vidto,epicshare,2gbhosting,alldebrid,allmyvideos,castamp,cheesestream,clicktoview,crunchyroll,cyberlocker,daclips,dailymotion,divxstage,donevideo,ecostream,entroupload,facebook,filebox,hostingbulk,hostingcup,jumbofiles,limevideo,movdivx,movpod,movshare,movzap,muchshare,nolimitvideo,nosvideo,novamov,nowvideo,ovfile,play44_net,played,playwire,premiumize_me,primeshare,promptfile,purevid,rapidvideo,realdebrid,rpnet,seeon,sharefiles,sharerepo,sharesix,skyload,stagevu,stream2k,streamcloud,thefile,tubeplus,tunepk,ufliq,upbulk,uploadc,uploadcrazynet,veoh,vidbull,vidcrazynet,video44,videobb,videofun,videotanker,videoweed,videozed,videozer,vidhog,vidpe,vidplay,vidstream,vidup_org,vidx,vidxden,vidzur,vimeo,vureel,watchfreeinhd,xvidstage,yourupload,youtube,youwatch,zalaa,zooupload,zshare,"
-    sortorder = "mightyupload,nowvideo,putlocker,movreel,lemuploads,180upload,hugefiles,"
+    all=re.compile('class="link_name">(.+?)</li>.+?playing_button"><a href="(.+?)".+?said_work">.+?(.+?)% said work</div>.+?good_bad').findall(link)
+    sortorder = "vodlocker,180upload,hugefiles,"
     sortorder = ','.join((sortorder.split(',')[::-1]))
-    all_coll = sorted(all_coll, key=lambda word: sortorder.find(word[0].lower())*-1)
-    for host,urls in all_coll:
-        if host.lower() in sortorder:
-            host = host.strip()
-            main.addDirb(name+" [COLOR blue]"+host.upper()+"[/COLOR]",str(urls),911,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    for host,urls,percent in all:
+        if host.strip().lower() in sortorder:
+            percent = int(percent)
+            if percent > 70:
+                host = host.strip()
+                main.addDirb(name+" [COLOR blue]"+host.upper()+"[/COLOR]",str(urls),911,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
 
 def GroupedHosts(name,url,thumb):
     #if selfAddon.getSetting("hide-download-instructions") != "true":
         #main.addLink("[COLOR red]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
-    urls = eval(url)
-    for url in urls:
-        main.addDown2(name,MainUrl+url,905,thumb,thumb)
+    PLAY(name,MainUrl+url)
 
 def resolveM25URL(url):
     html=main.OPENURL(url)
-    match = re.search("location\.href='(.+?)'",html)
+    match = re.search('IFRAME SRC="(.+?)"',html)
     if match: return match.group(1)
     return
 
@@ -325,6 +315,7 @@ def PLAY(name,murl):
         xbmc.executebuiltin("XBMC.Notification(Please Wait!,Resolving Link,3000)")
         stream_url = main.resolve_url(murl)
         infoL={'Title': infoLabels['metaName'], 'Plot': infoLabels['plot'], 'Genre': infoLabels['genre']}
+        print stream_url
         # play with bookmark
         from resources.universal import playbackengine
         player = playbackengine.PlayWithoutQueueSupport(resolved_url=stream_url, addon_id=addon_id, video_type=video_type, title=str(infoLabels['title']),season=str(season), episode=str(episode), year=str(infoLabels['year']),img=img,infolabels=infoL, watchedCallbackwithParams=main.WatchedCallbackwithParams,imdb_id=imdb_id)

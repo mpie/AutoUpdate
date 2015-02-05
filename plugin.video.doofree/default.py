@@ -490,7 +490,7 @@ def HOME():
     #main.addDir('New Movies','movies',285,'')
     main.addDir('Search Movies','supersearch',20,'')
     main.addDir('Search Tv Series','supersearch',21,'')
-    main.addDirHome('New Movies','http://www.movie25.cm/movies/latest-hd-movies/',901,'')
+    main.addDirHome('New Movies','http://www.movie25.cm/latest-hd-movies/',901,'')
     main.addDir('Tv Series','tv',285,'')
     url = ''
     data = parseJson(master_json)
