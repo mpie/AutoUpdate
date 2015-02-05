@@ -280,9 +280,9 @@ def VIDEOLINKS(name,url):
     for host,urls,percent in all:
         if host.strip().lower() in sortorder:
             percent = int(percent)
-            if percent > 78:
+            if percent > 80:
                 host = host.strip()
-                main.addDirb(name+" [COLOR blue]"+host.upper()+"[/COLOR] [COLOR green]"+percent+"% working[/COLOR]",str(urls),911,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+                main.addDirb(name+" [COLOR blue]"+host.upper()+"[/COLOR] [COLOR green]"+str(percent)+"% working[/COLOR]",str(urls),911,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
 
 def GroupedHosts(name,url,thumb):
     #if selfAddon.getSetting("hide-download-instructions") != "true":
