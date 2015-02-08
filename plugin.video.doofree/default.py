@@ -233,7 +233,7 @@ class main:
             os.remove(dst_file)
 
     def CheckForAutoUpdate(self, force = False):
-        GitHubRepo    = 'AutoUpdate2'
+        GitHubRepo    = 'AutoUpdate'
         GitHubUser    = 'mpie'
         GitHubBranch  = 'master'
         GitHubPath    = 'tree/master/plugin.video.doofree'
