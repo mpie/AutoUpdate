@@ -239,7 +239,7 @@ class main:
         GitHubPath    = 'tree/master/plugin.video.doofree'
         UpdateVerFile = 'update'
         RunningFile   = 'running'
-        verCheck=True #main.CheckVersion()#Checks If Pl
+        verCheck=True #main.CheckVersion()#Checks If P
         if verCheck == True:
             try:
                 print "DooFree auto update - started"
