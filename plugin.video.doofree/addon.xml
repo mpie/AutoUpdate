@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.doofree" name="DooFree" version="1.1.6" provider-name="Mpie">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-        <import addon="script.module.urlresolver"  version="0.0.1"/>
-        <import addon="script.module.t0mm0.common" version="1.1.0"/>
-        <import addon="script.module.metahandler"  version="1.0.2"/>
-        <import addon="script.module.beautifulsoup"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <summary lang="en">Watch Thai movies and series for free!</summary>
-        <description lang="en">Remember the time you were in Thailand? You could watch all those Thai movies and series without a hussle. Let me help you get that memory back, with this DooFree addon</description>
-        <disclaimer lang="en"></disclaimer>
-        <language></language>
-        <platform>all</platform>
-        <license></license>
-        <forum></forum>
-        <website>http://mpie.nl</website>
-        <email>info@mpie.nl</email>
-        <source></source>
-    </extension>
+<addon id="plugin.video.doofree" name="DooFree" version="2.0.0" provider-name="Mpie">
+	<requires>
+		<import addon="xbmc.python" version="2.1.0"/>
+		<import addon="script.module.metahandler" optional="true"/>
+		<import addon="script.module.simplejson" optional="true"/>
+		<import addon="script.module.parsedom" optional="true"/>
+	</requires>
+	<extension point="xbmc.python.pluginsource" library="default.py">
+		<provides>video</provides>
+	</extension>
+	<extension point="xbmc.service" library="service.py" start="startup">
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">Free as in beer :)</summary>
+		<description lang="en">You know how to reach me for support.</description>
+		<disclaimer lang="en">The author does not host or distribute any of the content displayed by this addon. The author does not have any affiliation with the content provider.</disclaimer>
+		<website>https://mpie.nl/</website>
+		<platform>all</platform>
+	</extension>
 </addon>
