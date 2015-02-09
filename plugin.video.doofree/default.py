@@ -5780,7 +5780,7 @@ class resolver:
         if hour > 18 and hour < 23:
             hd_rank = ['VK']
         else:
-            hd_rank = ['Hugefiles', 'YIFY', 'Billionuploads', 'GVideo', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'VK', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
+            hd_rank = ['YIFY', 'Billionuploads', 'GVideo', 'Movreel', 'Hugefiles', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'VK', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
 
         hd_rank = [i.lower() for i in hd_rank]
         hd_rank = uniqueList(hd_rank).list
@@ -5840,8 +5840,8 @@ class resolver:
 
         self.sources = [i for i in self.sources if not i['host'] in blocks]
 
-        #self.sources = [i for i in self.sources if not (i['quality'] in ['1080p', 'HD'] and not i['host'] in hd_access)]
-        self.sources = [i for i in self.sources if not (i['quality'] in ['1080p', 'HD'] and not i['host'] in self.hosthdDict)]
+        self.sources = [i for i in self.sources if not (i['quality'] in ['1080p', 'HD'] and not i['host'] in hd_access)]
+        #self.sources = [i for i in self.sources if not (i['quality'] in ['1080p', 'HD'] and not i['host'] in self.hosthdDict)]
 
         if getSetting("autoplay_hd") == 'false':
             self.sources = [i for i in self.sources if not i['quality'] in ['1080p', 'HD']]
