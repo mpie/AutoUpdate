@@ -5778,7 +5778,7 @@ class resolver:
         hd_rank = [i.lower() for i in hd_rank]
         hd_rank = uniqueList(hd_rank).list
 
-        sd_rank = ['Mightyupload', 'Billionuploads', '180upload', 'Ororo', 'Animeultima', 'Streamin', 'Grifthost', 'iShared', 'Cloudyvideos', 'Mrfile', 'Vidbull', 'VK', 'Movshare', 'Vodlocker', 'Played', 'Gorillavid', 'Bestreams', 'Divxstage']
+        sd_rank = ['Mightyupload', 'Billionuploads', '180upload', 'Ororo', 'Animeultima', 'Streamin', 'Grifthost', 'iShared', 'Cloudyvideos', 'Mrfile', 'VK', 'Movshare', 'Vidbull', 'Vodlocker', 'Played', 'Gorillavid', 'Divxstage']
 
         sd_rank = [i.lower() for i in sd_rank]
         sd_rank = uniqueList(sd_rank).list
