@@ -869,8 +869,8 @@ class index:
             t1 = int(re.sub('[^0-9]', '', str(match[3])))
             t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
             update = abs(t2 - t1) >= int(timeout*60)
-            #if update == False:
-                #return response
+            if update == False:
+                return response
         except:
             pass
 
@@ -5656,9 +5656,9 @@ class resolver:
             t1 = int(re.sub('[^0-9]', '', str(match[5])))
             t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
             update = abs(t2 - t1) > 60
-            #if update == False:
-                #sources = json.loads(match[4])
-                #return global_sources.extend(sources)
+            if update == False:
+                sources = json.loads(match[4])
+                return global_sources.extend(sources)
         except:
             pass
 
@@ -5707,9 +5707,9 @@ class resolver:
             t1 = int(re.sub('[^0-9]', '', str(match[5])))
             t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
             update = abs(t2 - t1) > 60
-            #if update == False:
-                #sources = json.loads(match[4])
-                #return global_sources.extend(sources)
+            if update == False:
+                sources = json.loads(match[4])
+                return global_sources.extend(sources)
         except:
             pass
 
