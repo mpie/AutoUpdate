@@ -1266,8 +1266,8 @@ class index:
         xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=cacheToDisc)
         for i in range(0, 200):
             if xbmc.getCondVisibility('Container.Content(movies)'):
-                return index().container_view('movies', {'skin.confluence' : 515})
-            xbmc.sleep(100)
+                return index().container_view('movies', {'skin.confluence' : 500})
+            xbmc.sleep(50)
 
     def showList(self, showList):
         if showList == None or len(showList) == 0: return
