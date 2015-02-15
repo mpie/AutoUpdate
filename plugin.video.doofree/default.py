@@ -5772,7 +5772,7 @@ class resolver:
         #hd_rank += [getSetting("hosthd1"), getSetting("hosthd2"), getSetting("hosthd3"), getSetting("hosthd4"), getSetting("hosthd5"), getSetting("hosthd6"), getSetting("hosthd7"), getSetting("hosthd8"), getSetting("hosthd9"), getSetting("hosthd10"), getSetting("hosthd11"), getSetting("hosthd12"), getSetting("hosthd13"), getSetting("hosthd14"), getSetting("hosthd15"), getSetting("hosthd16"), getSetting("hosthd17")]
 	    #hd_rank = ['Hugefiles', 'YIFY', 'Muchmovies', 'Billionuploads', 'GVideo', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'VK', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
 
-        hd_rank = ['YIFY', 'GVideo', 'Movreel', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'VK', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
+        hd_rank = ['YIFY', 'GVideo', 'VK', 'Movreel', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
 
         hd_rank = [i.lower() for i in hd_rank]
         hd_rank = uniqueList(hd_rank).list
@@ -5792,7 +5792,6 @@ class resolver:
 
         if getSetting("play_hd") == 'false':
             self.sources = [i for i in self.sources if not i['quality'] in ['1080p', 'HD']]
-
         count = 1
         for i in range(len(self.sources)):
             source = self.sources[i]['source'].lower()
@@ -5805,7 +5804,6 @@ class resolver:
             self.sources[i]['host'] = self.sources[i]['source']
             self.sources[i]['source'] = label.upper()
             count = count + 1
-        print self.sources
         return self.sources
 
     def sources_dialog(self):
@@ -5827,21 +5825,21 @@ class resolver:
             return
 
     def sources_direct(self):
-        hd_access = ['movreel', 'gvideo', 'hugefiles', '180upload', 'niter', 'yify', 'einthusan', 'vk']
+        hd_access = ['yify', 'gvideo', 'vk', 'movreel', 'hugefiles', '180upload', 'niter', 'einthusan']
         blocks = ['furk']
 
         self.sources = [i for i in self.sources if not i['host'] in blocks]
-
-        self.sources = [i for i in self.sources if not (i['quality'] in ['1080p', 'HD'] and not i['host'] in hd_access)]
 
         if getSetting("autoplay_hd") == 'false':
             self.sources = [i for i in self.sources if not i['quality'] in ['1080p', 'HD']]
 
         u = None
-
         for i in self.sources:
             try:
                 url = self.sources_resolve(i['url'], i['provider'])
+                print i['provider']
+                print url
+		print i['source']
                 xbmc.sleep(100)
                 if url == None: raise Exception()
                 if u == None: u = url
