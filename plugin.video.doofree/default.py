@@ -5829,7 +5829,9 @@ class resolver:
         blocks = ['furk']
 
         self.sources = [i for i in self.sources if not i['host'] in blocks]
-        self.sources.pop(0)
+        
+        if len(self.sources) > 1:
+            self.sources.pop(0)
         #print self.sources
         if getSetting("autoplay_hd") == 'false':
             self.sources = [i for i in self.sources if not i['quality'] in ['1080p', 'HD']]
