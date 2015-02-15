@@ -5772,15 +5772,7 @@ class resolver:
         #hd_rank += [getSetting("hosthd1"), getSetting("hosthd2"), getSetting("hosthd3"), getSetting("hosthd4"), getSetting("hosthd5"), getSetting("hosthd6"), getSetting("hosthd7"), getSetting("hosthd8"), getSetting("hosthd9"), getSetting("hosthd10"), getSetting("hosthd11"), getSetting("hosthd12"), getSetting("hosthd13"), getSetting("hosthd14"), getSetting("hosthd15"), getSetting("hosthd16"), getSetting("hosthd17")]
 	    #hd_rank = ['Hugefiles', 'YIFY', 'Muchmovies', 'Billionuploads', 'GVideo', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'VK', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
 
-        import time
-        current_time = time.localtime()
-        hour = int(time.strftime("%H", current_time))
-        print 'hour:'
-        print hour
-        if hour > 18 and hour < 23:
-            hd_rank = ['VK']
-        else:
-            hd_rank = ['Hugefiles', 'YIFY', 'Billionuploads', 'GVideo', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'VK', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
+        hd_rank = ['YIFY', 'GVideo', 'Movreel', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'VK', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
 
         hd_rank = [i.lower() for i in hd_rank]
         hd_rank = uniqueList(hd_rank).list
@@ -5840,8 +5832,7 @@ class resolver:
 
         self.sources = [i for i in self.sources if not i['host'] in blocks]
 
-        #self.sources = [i for i in self.sources if not (i['quality'] in ['1080p', 'HD'] and not i['host'] in hd_access)]
-        self.sources = [i for i in self.sources if not (i['quality'] in ['1080p', 'HD'] and not i['host'] in self.hosthdDict)]
+        self.sources = [i for i in self.sources if not (i['quality'] in ['1080p', 'HD'] and not i['host'] in hd_access)]
 
         if getSetting("autoplay_hd") == 'false':
             self.sources = [i for i in self.sources if not i['quality'] in ['1080p', 'HD']]
