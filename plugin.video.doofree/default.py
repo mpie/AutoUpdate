@@ -1383,7 +1383,7 @@ class index:
         xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
         for i in range(0, 200):
             if xbmc.getCondVisibility('Container.Content(tvshows)'):
-                return index().container_view('tvshows', {'skin.confluence' : 503})
+                return index().container_view('tvshows', {'skin.confluence' : 500})
             xbmc.sleep(100)
 
     def seasonList(self, seasonList):
