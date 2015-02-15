@@ -5772,7 +5772,7 @@ class resolver:
         #hd_rank += [getSetting("hosthd1"), getSetting("hosthd2"), getSetting("hosthd3"), getSetting("hosthd4"), getSetting("hosthd5"), getSetting("hosthd6"), getSetting("hosthd7"), getSetting("hosthd8"), getSetting("hosthd9"), getSetting("hosthd10"), getSetting("hosthd11"), getSetting("hosthd12"), getSetting("hosthd13"), getSetting("hosthd14"), getSetting("hosthd15"), getSetting("hosthd16"), getSetting("hosthd17")]
 	    #hd_rank = ['Hugefiles', 'YIFY', 'Muchmovies', 'Billionuploads', 'GVideo', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'VK', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
 
-        hd_rank = ['YIFY', 'GVideo', 'VK', 'Movreel', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
+        hd_rank = ['YIFY', 'GVideo', 'Movreel', 'VK', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
 
         hd_rank = [i.lower() for i in hd_rank]
         hd_rank = uniqueList(hd_rank).list
@@ -5829,7 +5829,8 @@ class resolver:
         blocks = ['furk']
 
         self.sources = [i for i in self.sources if not i['host'] in blocks]
-
+        #self.sources.pop(0)
+        #print self.sources
         if getSetting("autoplay_hd") == 'false':
             self.sources = [i for i in self.sources if not i['quality'] in ['1080p', 'HD']]
 
