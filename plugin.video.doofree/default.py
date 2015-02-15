@@ -5552,6 +5552,7 @@ class resolver:
                 season, episode = episodes().tvrage_redirect(title, year, imdb, tvdb, season, episode, show, date, genre)
                 self.sources = self.sources_tv(name, title, year, imdb, tvdb, date, season, episode, show, show_alt)
 
+            self.content = content
             self.sources = self.sources_filter()
             if self.sources == []: raise Exception()
 
@@ -5789,13 +5790,15 @@ class resolver:
         filter = []
         for host in hd_rank: filter += [i for i in self.sources if i['quality'] == '1080p' and i['source'].lower() == host.lower()]
         for host in hd_rank: filter += [i for i in self.sources if i['quality'] == 'HD' and i['source'].lower() == host.lower()]
-        for host in sd_rank: filter += [i for i in self.sources if not i['quality'] in ['1080p', 'HD'] and i['source'].lower() == host.lower()]
+        if self.content == 'episode':
+            for host in sd_rank: filter += [i for i in self.sources if not i['quality'] in ['1080p', 'HD'] and i['source'].lower() == host.lower()]
         self.sources = filter
 
         filter = []
         filter += [i for i in self.sources if i['quality'] == '1080p']
         filter += [i for i in self.sources if i['quality'] == 'HD']
-        filter += [i for i in self.sources if i['quality'] == 'SD']
+        if self.content == 'episode':
+            filter += [i for i in self.sources if i['quality'] == 'SD']
         self.sources = filter
 
         if getSetting("play_hd") == 'false':
