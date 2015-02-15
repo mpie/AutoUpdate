@@ -5564,11 +5564,12 @@ class resolver:
                 url = self.sources_dialog()
             elif url == 'direct://':
                 url = self.sources_direct()
-            elif not autoplay == 'true':
+            elif not autoplay == 'true' or content == 'episode':
                 url = self.sources_dialog()
             else:
                 url = self.sources_direct()
-
+            print 'url-------------'
+            print url
             if url == None: raise Exception()
             if url == 'close://': return
 
@@ -5777,17 +5778,24 @@ class resolver:
         hd_rank = [i.lower() for i in hd_rank]
         hd_rank = uniqueList(hd_rank).list
 
+        sd_rank = ['Mightyupload', 'Billionuploads', '180upload', 'Ororo', 'Animeultima', 'Streamin', 'Grifthost', 'iShared', 'Cloudyvideos', 'Mrfile', 'Vidbull', 'VK', 'Movshare', 'Vodlocker', 'Played', 'Gorillavid', 'Bestreams', 'Divxstage']
+
+        sd_rank = [i.lower() for i in sd_rank]
+        sd_rank = uniqueList(sd_rank).list
+
         for i in range(len(self.sources)): self.sources[i]['source'] = self.sources[i]['source'].lower()
         self.sources = sorted(self.sources, key=itemgetter('source'))
 
         filter = []
         for host in hd_rank: filter += [i for i in self.sources if i['quality'] == '1080p' and i['source'].lower() == host.lower()]
         for host in hd_rank: filter += [i for i in self.sources if i['quality'] == 'HD' and i['source'].lower() == host.lower()]
+        for host in sd_rank: filter += [i for i in self.sources if not i['quality'] in ['1080p', 'HD'] and i['source'].lower() == host.lower()]
         self.sources = filter
 
         filter = []
         filter += [i for i in self.sources if i['quality'] == '1080p']
         filter += [i for i in self.sources if i['quality'] == 'HD']
+        filter += [i for i in self.sources if i['quality'] == 'SD']
         self.sources = filter
 
         if getSetting("play_hd") == 'false':
@@ -5796,14 +5804,15 @@ class resolver:
         for i in range(len(self.sources)):
             source = self.sources[i]['source'].lower()
 
-            label = '%02d | [B]%s[/B] | ' % (count, self.sources[i]['provider'])
+            label = '%02d | [B]%s[/B] | ' % (count, self.sources[i]['source'])
 
             try: label += '%s' % (self.sources[i]['info'])
-            except: label += '%s | %s' % (self.sources[i]['source'], self.sources[i]['quality'])
-
+            except: label += '%s' % (self.sources[i]['quality'])
+            
             self.sources[i]['host'] = self.sources[i]['source']
             self.sources[i]['source'] = label.upper()
             count = count + 1
+        print self.sources
         return self.sources
 
     def sources_dialog(self):
@@ -5822,6 +5831,7 @@ class resolver:
             self.selectedSource = self.sources[select]['source']
             return url
         except:
+            print 'could not return source'
             return
 
     def sources_direct(self):
@@ -5829,9 +5839,8 @@ class resolver:
         blocks = ['furk']
 
         self.sources = [i for i in self.sources if not i['host'] in blocks]
-        
-        if len(self.sources) > 1:
-            self.sources.pop(0)
+        #self.sources = [i for i in self.sources if not (i['quality'] in ['1080p', 'HD'] and not i['host'] in hd_access)]
+
         #print self.sources
         if getSetting("autoplay_hd") == 'false':
             self.sources = [i for i in self.sources if not i['quality'] in ['1080p', 'HD']]
@@ -5883,7 +5892,54 @@ class resolver:
         ]
 
     def sources_dict(self):
-        self.hostDict = []
+        self.hostDict = [
+        '180upload',
+        'allmyvideos',
+        'bestreams',
+        #'billionuploads',
+        'cloudyvideos',
+        'cloudzilla',
+        'daclips',
+        #'divxstage',
+        'fastvideo',
+        #'filecloud',
+        'filehoot',
+        'filenuke',
+        'gorillavid',
+        'grifthost',
+        #'hostingbulk',
+        #'hugefiles',
+        'ipithos',
+        'ishared',
+        #'kingfiles',
+        'mightyupload',
+        'mooshare',
+        'movdivx',
+        'movpod',
+        'movreel',
+        'movshare',
+        #'movzap',
+        'mrfile',
+        'nosvideo',
+        'novamov',
+        'nowvideo',
+        'played',
+        'primeshare',
+        'promptfile',
+        'sharerepo',
+        'sharesix',
+        'stagevu',
+        'streamcloud',
+        'streamin',
+        'thefile',
+        'thevideo',
+        'uploadc',
+        #'uploadrocket',
+        'v-vids',
+        'vidbull',
+        #'videomega',
+        'videoweed'
+        ]
 
 
 main()
