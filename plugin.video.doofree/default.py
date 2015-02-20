@@ -127,6 +127,8 @@ class main:
         elif action == 'thai_shows_list':             thai().thai_shows_list(url, catid)
         elif action == 'thai_shows_episodes':         thai().thai_shows_episodes(url, catid)
         elif action == 'thai_shows_play_episode':     thai().thai_shows_play_episode(name, url, channel)
+        # us live tv
+        elif action == 'root_livetvus':               us().tv()
         # search
         elif action == 'root_search':                 root().search()
 
@@ -2231,6 +2233,7 @@ class root:
         rootList.append({'name': 30503, 'image': 'root_livetv.jpg', 'action': 'root_livetv'})
         rootList.append({'name': 30504, 'image': 'root_thai.jpg', 'action': 'root_thai'})
         #rootList.append({'name': 30508, 'image': 'root_tools.jpg', 'action': 'root_tools'})
+        #rootList.append({'name': 30505, 'image': 'root_livetvus.jpg', 'action': 'root_livetvus'})
         rootList.append({'name': 30509, 'image': 'search_movies.jpg', 'action': 'movies_search'})
         rootList.append({'name': 30510, 'image': 'search_series.jpg', 'action': 'shows_search'})
         index().rootList(rootList)
@@ -4489,6 +4492,39 @@ class shows:
         except:
             pass
 
+class us:
+    def __init__(self):
+        self.list = []
+
+    def exists(self, url):
+        try:
+            r = urllib2.urlopen(url, timeout=1)
+            if r.getcode() == 200:
+                return True
+        except Exception, e:
+            return False
+
+    def parseJson(self, url):
+        req = urllib2.Request(url)
+        opener = urllib2.build_opener()
+        f = opener.open(req)
+        data = json.loads(f.read())
+        return data
+
+    def playtv(self, name, url, image):
+        item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=image)
+        xbmc.Player().play(url, item)
+
+    def tv(self):
+        url = link().live_tv_list
+        self.list = index().cache(self.livetv_list, 0, url)
+        index().showLiveTvList(self.list)
+        return self.list
+
+    def livetv_list(self, url):
+        self.list = self.parseJson(url)
+        return self.list
+
 class thai:
     def __init__(self):
         self.list = []
@@ -5774,12 +5810,12 @@ class resolver:
         #hd_rank += [getSetting("hosthd1"), getSetting("hosthd2"), getSetting("hosthd3"), getSetting("hosthd4"), getSetting("hosthd5"), getSetting("hosthd6"), getSetting("hosthd7"), getSetting("hosthd8"), getSetting("hosthd9"), getSetting("hosthd10"), getSetting("hosthd11"), getSetting("hosthd12"), getSetting("hosthd13"), getSetting("hosthd14"), getSetting("hosthd15"), getSetting("hosthd16"), getSetting("hosthd17")]
 	    #hd_rank = ['Hugefiles', 'YIFY', 'Muchmovies', 'Billionuploads', 'GVideo', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'VK', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
 
-        hd_rank = ['YIFY', 'GVideo', 'Movreel', 'VK', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
+        hd_rank = ['YIFY', 'GVideo', 'Muchmovies', 'Movreel', 'VK', 'Hugefiles', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
 
         hd_rank = [i.lower() for i in hd_rank]
         hd_rank = uniqueList(hd_rank).list
 
-        sd_rank = ['Mightyupload', 'Billionuploads', '180upload', 'Ororo', 'Animeultima', 'Streamin', 'Grifthost', 'iShared', 'Cloudyvideos', 'Mrfile', 'VK', 'Movshare', 'Vidbull', 'Vodlocker', 'Played', 'Gorillavid', 'Divxstage']
+        sd_rank = ['Mightyupload', 'Billionuploads', '180upload', 'Hugefiles', 'Muchmovies', 'Ororo', 'Animeultima', 'Streamin', 'Grifthost', 'iShared', 'Cloudyvideos', 'Mrfile', 'VK', 'Movshare', 'Vidbull', 'Vodlocker', 'Played', 'Gorillavid', 'Divxstage']
 
         sd_rank = [i.lower() for i in sd_rank]
         sd_rank = uniqueList(sd_rank).list
