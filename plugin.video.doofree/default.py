@@ -2233,7 +2233,7 @@ class root:
         rootList.append({'name': 30503, 'image': 'root_livetv.jpg', 'action': 'root_livetv'})
         rootList.append({'name': 30504, 'image': 'root_thai.jpg', 'action': 'root_thai'})
         #rootList.append({'name': 30508, 'image': 'root_tools.jpg', 'action': 'root_tools'})
-        #rootList.append({'name': 30505, 'image': 'root_livetvus.jpg', 'action': 'root_livetvus'})
+        rootList.append({'name': 30505, 'image': 'root_livetvus.jpg', 'action': 'root_livetvus'})
         rootList.append({'name': 30509, 'image': 'search_movies.jpg', 'action': 'movies_search'})
         rootList.append({'name': 30510, 'image': 'search_series.jpg', 'action': 'shows_search'})
         index().rootList(rootList)
@@ -2356,6 +2356,7 @@ class link:
 
         # Thai
         self.live_tv_list = 'https://raw.github.com/mpie/doofree/master/json/live_tv.json'
+        self.live_tv_us_list = 'https://raw.github.com/mpie/doofree/master/json/live_tv_us.json'
         self.thaishows_baseurl = 'http://www.seesantv.com/seesantv_2014/program_ajax3.php?id=%s'
         self.thaishows_pageurl = 'http://www.seesantv.com/seesantv_2014/program.php?id=%s'
         self.thaishows_items = []
@@ -4516,7 +4517,7 @@ class us:
         xbmc.Player().play(url, item)
 
     def tv(self):
-        url = link().live_tv_list
+        url = link().live_tv_us_list
         self.list = index().cache(self.livetv_list, 0, url)
         index().showLiveTvList(self.list)
         return self.list
