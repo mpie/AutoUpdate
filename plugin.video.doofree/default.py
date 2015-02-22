@@ -2456,7 +2456,7 @@ class people:
 
     def imdb_list(self, url):
         try:
-            result = getUrl(url, timeout='30').result
+            result = getUrl(url, timeout='1').result
             result = result.decode('iso-8859-1').encode('utf-8')
             people = common.parseDOM(result, "tr", attrs = { "class": ".+? detailed" })
         except:
@@ -2502,7 +2502,7 @@ class genres:
 
     def imdb_list(self):
         try:
-            result = getUrl(link().imdb_genre, timeout='30').result
+            result = getUrl(link().imdb_genre, timeout='1').result
             result = common.parseDOM(result, "table", attrs = { "class": "genre-table" })[0]
             genres = common.parseDOM(result, "h3")
         except:
@@ -2530,7 +2530,7 @@ class genres:
 
     def imdb_list2(self):
         try:
-            result = getUrl(link().imdb_genre, timeout='30').result
+            result = getUrl(link().imdb_genre, timeout='1').result
             result = common.parseDOM(result, "div", attrs = { "class": "article" })
             result = [i for i in result if str('"tv_genres"') in i][0]
             genres = common.parseDOM(result, "td")
@@ -2568,7 +2568,7 @@ class languages:
 
     def imdb_list(self):
         try:
-            result = getUrl(link().imdb_language, timeout='30').result
+            result = getUrl(link().imdb_language, timeout='1').result
             result = common.parseDOM(result, "table", attrs = { "class": "splash" })[0]
             languages = common.parseDOM(result, "td")
         except:
@@ -2682,7 +2682,7 @@ class userlists:
     def imdb_list(self):
         try:
             userlists = []
-            result = getUrl(link().imdb_userlists % link().imdb_user, timeout='30').result
+            result = getUrl(link().imdb_userlists % link().imdb_user, timeout='1').result
             result = result.decode('iso-8859-1').encode('utf-8')
             userlists = common.parseDOM(result, "div", attrs = { "class": "list_name" })
         except:
@@ -2794,7 +2794,7 @@ class channels:
             title = self.list[i]['title']
             year = self.list[i]['year']
             url = link().imdb_api_search % urllib.quote_plus(title)
-            result = getUrl(url, timeout='30').result
+            result = getUrl(url, timeout='1').result
             result = common.replaceHTMLCodes(result)
             result = json.loads(result)
             for x in result.keys(): match += result[x]
@@ -2992,7 +2992,7 @@ class movies:
     def iwatchonline_list(self, url):
         print 'url: ' + url
         try:
-            result = getUrl(url, timeout='30').result
+            result = getUrl(url, timeout='1').result
             result = result.decode('iso-8859-1').encode('utf-8')
             movies = common.parseDOM(result, "li", attrs = { "class": "" })
         except:
@@ -3109,7 +3109,7 @@ class movies:
         dialogWait = xbmcgui.DialogProgress()
         dialogWait.create('Please wait until list is cached.')
         #try:
-        result = getUrl(url, timeout='30').result
+        result = getUrl(url, timeout='1').result
         result = result.decode('iso-8859-1').encode('utf-8')
         print result
         # <h3 class="r"><a href="http://www.icefilms.info/ip.php?v=163208" onmousedown="return rwt(this,'','','','8','AFQjCNG1cs42mfM7P5ABhi08gGVwAwbg3A','','0CFAQFjAH','','',event)">Transformers Prime 3x02 Scattered (2013) links - icefilms.info</a></h3>
@@ -3128,7 +3128,7 @@ class movies:
                 # url = common.replaceHTMLCodes(url)
                 # url = url.encode('utf-8')
                 # http://www.imdb.com/title/tt1399103
-                pageImdb = getUrl(url, timeout='30').result
+                pageImdb = getUrl(url, timeout='1').result
                 imdb = re.compile('http://www.imdb.com/title/tt(.+?)/ target').findall(pageImdb)[0]
                 url = link().imdb_title % imdb
 
@@ -3171,7 +3171,7 @@ class movies:
         dialogWait.create('Please wait until Movie list is cached.')
 
         try:
-            result = getUrl(url, timeout='30').result
+            result = getUrl(url, timeout='1').result
             result = result.decode('iso-8859-1').encode('utf-8')
             # <a name=i id=1567437></a><img class=star><a href=/ip.php?v=204188&>The Voices (2014)</a>
             movies = re.compile('<a name=i id=(.+?)>.+?<a href=(.+?)\&>(.+?) \((.+?)\)</a>').findall(result)
@@ -3227,7 +3227,7 @@ class movies:
 
     def imdb_list(self, url):
         try:
-            result = getUrl(url, timeout='30').result
+            result = getUrl(url, timeout='1').result
             result = result.decode('iso-8859-1').encode('utf-8')
             movies = common.parseDOM(result, "tr", attrs = { "class": ".+?" })
         except:
@@ -3350,11 +3350,11 @@ class movies:
     def imdb_list2(self, url, idx=True):
         try:
             if url == link().imdb_watchlist % link().imdb_user:
-                result = getUrl(url, timeout='30').result
+                result = getUrl(url, timeout='1').result
                 url = re.compile('/export[?]list_id=(ls\d*)').findall(result)[0]
                 url = link().imdb_list % url
 
-            result = getUrl(url, timeout='30').result
+            result = getUrl(url, timeout='1').result
 
             try:
                 if idx == True: raise Exception()
@@ -3362,7 +3362,7 @@ class movies:
                 pages = re.compile('Page \d+? of (\d*)').findall(pages)[0]
                 for i in range(1, int(pages)):
                     u = url.replace('&start=1', '&start=%s' % str(i*100+1))
-                    try: result += getUrl(u, timeout='30').result
+                    try: result += getUrl(u, timeout='1').result
                     except: pass
             except:
                 pass
@@ -4039,7 +4039,7 @@ class shows:
 
     def imdb_list(self, url):
         try:
-            result = getUrl(url, timeout='30').result
+            result = getUrl(url, timeout='1').result
             result = result.decode('iso-8859-1').encode('utf-8')
             shows = common.parseDOM(result, "tr", attrs = { "class": ".+?" })
         except:
@@ -4131,11 +4131,11 @@ class shows:
     def imdb_list2(self, url, idx=True):
         try:
             if url == link().imdb_watchlist % link().imdb_user:
-                result = getUrl(url, timeout='30').result
+                result = getUrl(url, timeout='1').result
                 url = re.compile('/export[?]list_id=(ls\d*)').findall(result)[0]
                 url = link().imdb_tv_list % url
 
-            result = getUrl(url, timeout='30').result
+            result = getUrl(url, timeout='1').result
 
             try:
                 if idx == True: raise Exception()
@@ -4143,7 +4143,7 @@ class shows:
                 pages = re.compile('Page \d+? of (\d*)').findall(pages)[0]
                 for i in range(1, int(pages)):
                     u = url.replace('&start=1', '&start=%s' % str(i*100+1))
-                    try: result += getUrl(u, timeout='30').result
+                    try: result += getUrl(u, timeout='1').result
                     except: pass
             except:
                 pass
@@ -4919,7 +4919,7 @@ class seasons:
 
             match = []
             url = link().imdb_api_search % urllib.quote_plus(show)
-            result = getUrl(url, timeout='30').result
+            result = getUrl(url, timeout='1').result
             result = common.replaceHTMLCodes(result)
             result = json.loads(result)
             for i in result.keys(): match += result[i]
