@@ -130,7 +130,7 @@ class main:
         # us live tv
         elif action == 'root_livetvus':               us().tv()
         # search
-        elif action == 'root_search':                 root().search()
+        elif action == 'movies_search':               movies().search(query)
 
         elif action == 'root_movies':                 root().movies()
         elif action == 'root_doofree':                root().doofree()
@@ -2947,10 +2947,18 @@ class movies:
         else:
             self.query = query
         if not (self.query == None or self.query == ''):
+
             self.query = link().imdb_search % urllib.quote_plus(self.query)
             self.list = self.imdb_list(self.query)
             index().movieList(self.list)
             return self.list
+            '''
+            url = 'http://www.google.com/search?hl=en&q=site%3Ahttp%3A%2F%2Fwww.icefilms.info%2Fip+'+self.query+'&btnG=Google+Search'
+            self.list = index().cache(self.icefilms_search, 24, url)
+            print self.list
+            index().movieList(self.list)
+            return self.list
+            '''
 
     def favourites(self):
         try:
@@ -3095,8 +3103,67 @@ class movies:
 
         return self.list
 
+    def icefilms_search(self, url):
+        # kill the wait dialog
+        xbmc.executebuiltin("XBMC.Dialog.Close(busydialog,true)")
+        dialogWait = xbmcgui.DialogProgress()
+        dialogWait.create('Please wait until list is cached.')
+        #try:
+        result = getUrl(url, timeout='30').result
+        result = result.decode('iso-8859-1').encode('utf-8')
+        print result
+        # <h3 class="r"><a href="http://www.icefilms.info/ip.php?v=163208" onmousedown="return rwt(this,'','','','8','AFQjCNG1cs42mfM7P5ABhi08gGVwAwbg3A','','0CFAQFjAH','','',event)">Transformers Prime 3x02 Scattered (2013) links - icefilms.info</a></h3>
+        movies = re.compile('<h3 class="r">.+?a href="(.+?)".+?event\)">(.+?)</a></h3>').findall(result)
+        #except:
+            #return
+
+        for url, title in movies:
+            try:
+                name = '%s' % (title)
+                name = name.replace(' links - icefilms.info', '')
+                try: name = name.encode('utf-8')
+                except: pass
+
+                # url = 'https://ipv6.icefilms.info%s' % (url)
+                # url = common.replaceHTMLCodes(url)
+                # url = url.encode('utf-8')
+                # http://www.imdb.com/title/tt1399103
+                pageImdb = getUrl(url, timeout='30').result
+                imdb = re.compile('http://www.imdb.com/title/tt(.+?)/ target').findall(pageImdb)[0]
+                url = link().imdb_title % imdb
+
+                poster = ''
+                genre = '0'
+                duration = '0'
+                rating = '0'
+                votes = '0'
+                mpaa = '0'
+                director = '0'
+                plot = '0'
+                tagline = ''
+                self.list.append({'name': name, 'title': title, 'year': '', 'imdb': imdb, 'tvdb': '0', 'season': '0', 'episode': '0', 'show': '0', 'show_alt': '0', 'date': '0', 'genre': genre, 'url': url, 'poster': poster, 'fanart': '0', 'studio': '0', 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'plot': plot, 'plotoutline': tagline, 'tagline': tagline, 'next': next})
+            except:
+                pass
+
+        threads = []
+
+        totalLinks = len(self.list)
+        loadedLinks = 0
+        remaining_display = 'Loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+        dialogWait.update(0, '[B]Searching...[/B]', remaining_display)
+        for i in range(0, totalLinks):
+            loadedLinks = loadedLinks + 1
+            percent = (loadedLinks * 100)/totalLinks
+            remaining_display = 'Loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+            dialogWait.update(percent,'[B]Searching...[/B]', remaining_display)
+            threads.append(Thread(self.tmdb_info, i))
+            if dialogWait.iscanceled(): return False
+        [i.start() for i in threads]
+        [i.join() for i in threads]
+        print self.list
+        return self.list
+
     def icefilms_list(self, url):
-        print 'url: ' + url
 
         # kill the wait dialog
         xbmc.executebuiltin("XBMC.Dialog.Close(busydialog,true)")
@@ -3128,7 +3195,6 @@ class movies:
                 # url = common.replaceHTMLCodes(url)
                 # url = url.encode('utf-8')
                 url = link().imdb_title % imdb
-                print url
 
                 poster = ''
                 genre = '0'
@@ -5602,6 +5668,8 @@ class resolver:
                 url = self.sources_dialog()
             elif url == 'direct://':
                 url = self.sources_direct()
+            elif autoplay == 'true':
+                url = self.sources_dialog()
             elif not autoplay == 'true' or content == 'episode':
                 url = self.sources_dialog()
             else:
@@ -5811,7 +5879,7 @@ class resolver:
         #hd_rank += [getSetting("hosthd1"), getSetting("hosthd2"), getSetting("hosthd3"), getSetting("hosthd4"), getSetting("hosthd5"), getSetting("hosthd6"), getSetting("hosthd7"), getSetting("hosthd8"), getSetting("hosthd9"), getSetting("hosthd10"), getSetting("hosthd11"), getSetting("hosthd12"), getSetting("hosthd13"), getSetting("hosthd14"), getSetting("hosthd15"), getSetting("hosthd16"), getSetting("hosthd17")]
 	    #hd_rank = ['Hugefiles', 'YIFY', 'Muchmovies', 'Billionuploads', 'GVideo', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'VK', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
 
-        hd_rank = ['YIFY', 'GVideo', 'Muchmovies', 'Movreel', 'VK', 'Hugefiles', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
+        hd_rank = ['YIFY', 'GVideo', 'VidPlay', 'Muchmovies', '180upload', 'Movreel', 'VK', 'Hugefiles', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
 
         hd_rank = [i.lower() for i in hd_rank]
         hd_rank = uniqueList(hd_rank).list
@@ -5827,15 +5895,15 @@ class resolver:
         filter = []
         for host in hd_rank: filter += [i for i in self.sources if i['quality'] == '1080p' and i['source'].lower() == host.lower()]
         for host in hd_rank: filter += [i for i in self.sources if i['quality'] == 'HD' and i['source'].lower() == host.lower()]
-        if self.content == 'episode':
-            for host in sd_rank: filter += [i for i in self.sources if not i['quality'] in ['1080p', 'HD'] and i['source'].lower() == host.lower()]
+        #if self.content == 'episode':
+        for host in sd_rank: filter += [i for i in self.sources if not i['quality'] in ['1080p', 'HD'] and i['source'].lower() == host.lower()]
         self.sources = filter
 
         filter = []
         filter += [i for i in self.sources if i['quality'] == '1080p']
         filter += [i for i in self.sources if i['quality'] == 'HD']
-        if self.content == 'episode':
-            filter += [i for i in self.sources if i['quality'] == 'SD']
+        #if self.content == 'episode':
+        filter += [i for i in self.sources if i['quality'] == 'SD']
         self.sources = filter
 
         if getSetting("play_hd") == 'false':
@@ -5852,7 +5920,6 @@ class resolver:
             self.sources[i]['host'] = self.sources[i]['source']
             self.sources[i]['source'] = label.upper()
             count = count + 1
-        print self.sources
         return self.sources
 
     def sources_dialog(self):
