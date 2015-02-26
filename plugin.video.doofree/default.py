@@ -871,8 +871,8 @@ class index:
             t1 = int(re.sub('[^0-9]', '', str(match[3])))
             t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
             update = abs(t2 - t1) >= int(timeout*60)
-            #if update == False:
-                #return response
+            if update == False:
+                return response
         except:
             pass
 
