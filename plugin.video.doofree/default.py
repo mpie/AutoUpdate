@@ -871,8 +871,8 @@ class index:
             t1 = int(re.sub('[^0-9]', '', str(match[3])))
             t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
             update = abs(t2 - t1) >= int(timeout*60)
-            if update == False:
-                return response
+            #if update == False:
+                #return response
         except:
             pass
 
@@ -4760,12 +4760,13 @@ class thai:
         catid = int(catid)
         thaiChannels = [18,27,17,15,8,84,4,14]
         chMovies=[92,98,93]
-        link = getUrl(url + '&vdo_type=.mp4', timeout='10').result
+        link = getUrl(url + '&vdo_type=.mp4', timeout='30').result
         link = ''.join(link.splitlines()).replace('\'','"')
         link = ''.join(link.splitlines()).replace('<i class="icon-new"></i>','')
 
         episodematch = re.compile('<table class="program-archive">(.+?)</table>').findall(link)
-        episodes = re.compile('<a href="(.+?)" >(.+?)</a> </td>                           \t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t<a href="(.+?)" ><img').findall(episodematch[0])
+        #print episodematch
+        episodes = re.compile('<a href="(.+?)" >(.+?)</a>.+?</td>\t\t\t\t\t\t\t<td> \t\t\t\t\t\t\t\t<a href="(.+?)" ><img').findall(episodematch[0])
 
         programMeta = re.compile('<div class="program-meta">(.+?)</div>').findall(link)
         image = re.compile('<img src="(.+?)" alt').findall(programMeta[0])[0]
@@ -4789,6 +4790,8 @@ class thai:
         pages = re.compile('>(\d+)</a>').findall(paginator)
         print 'final channel'
         print channel
+        print 'total pages:'
+        print pages
         if len(pages) > 1:
             episodes = []
             for page in pages:
@@ -4797,12 +4800,12 @@ class thai:
                 pag = int(page) - 1
                 pageUrl = url + '&vdo_type=.mp4&page=' + str (pag)
 
-                link = getUrl(pageUrl, timeout='10').result
+                link = getUrl(pageUrl, timeout='30').result
                 link = ''.join(link.splitlines()).replace('\'','"')
                 link = ''.join(link.splitlines()).replace('<i class="icon-new"></i>','')
                 episodematch = re.compile('<table class="program-archive">(.+?)</table>').findall(link)
-                episodes += re.compile('<a href="(.+?)" >(.+?)</a> </td>                           \t\t\t\t\t\t\t<td>\t\t\t\t\t\t\t\t<a href="(.+?)" ><img').findall(episodematch[0])
-
+                episodes += re.compile('<a href="(.+?)" >(.+?)</a>.+?</td>\t\t\t\t\t\t\t<td> \t\t\t\t\t\t\t\t<a href="(.+?)" ><img').findall(episodematch[0])
+        print episodes
         for episode in episodes:
             if (episode[1].find('(HD)') != -1 and (catid == 18 or catid == 27)) or (catid not in [18, 27]):
                 name = episode[1].decode('iso-8859-11')
