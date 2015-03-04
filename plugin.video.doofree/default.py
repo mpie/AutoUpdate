@@ -5882,12 +5882,12 @@ class resolver:
         #hd_rank += [getSetting("hosthd1"), getSetting("hosthd2"), getSetting("hosthd3"), getSetting("hosthd4"), getSetting("hosthd5"), getSetting("hosthd6"), getSetting("hosthd7"), getSetting("hosthd8"), getSetting("hosthd9"), getSetting("hosthd10"), getSetting("hosthd11"), getSetting("hosthd12"), getSetting("hosthd13"), getSetting("hosthd14"), getSetting("hosthd15"), getSetting("hosthd16"), getSetting("hosthd17")]
 	    #hd_rank = ['Hugefiles', 'YIFY', 'Muchmovies', 'Billionuploads', 'GVideo', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'VK', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
 
-        hd_rank = ['YIFY', 'GVideo', 'VidPlay', 'Muchmovies', '180upload', 'Movreel', 'VK', 'Hugefiles', 'Sweflix', 'Videomega', 'Niter', 'Einthusan', 'V-vids', 'Vidbull', 'Filecloud', 'Uploadrocket', 'Kingfiles']
+        hd_rank = ['VK', 'GVideo', 'Muchmovies', 'Sweflix', 'Videomega', 'YIFY', 'Einthusan', '180upload', 'Vidplay', 'Uptobox', 'Mrfile', 'Mightyupload', 'Hugefiles', 'Filecloud', 'Uploadrocket', 'Kingfiles']
 
         hd_rank = [i.lower() for i in hd_rank]
         hd_rank = uniqueList(hd_rank).list
 
-        sd_rank = ['Mightyupload', 'Billionuploads', '180upload', 'Hugefiles', 'Muchmovies', 'Ororo', 'Animeultima', 'Streamin', 'Grifthost', 'iShared', 'Cloudyvideos', 'Mrfile', 'VK', 'Movshare', 'Vidbull', 'Vodlocker', 'Played', 'Gorillavid', 'Divxstage']
+        sd_rank = ['180upload', 'Vidplay', 'Ororo', 'HDTVshows', 'Animeultima', 'Grifthost', 'Primeshare', 'Promptfile', 'Nosvideo', 'Mrfile', 'Mightyupload', 'Cloudyvideos', 'iShared', 'Uptobox', 'V-vids', 'Ipithos', 'Zettahost', 'Uploadc', 'Zalaa']
 
         sd_rank = [i.lower() for i in sd_rank]
         sd_rank = uniqueList(sd_rank).list
@@ -5945,7 +5945,7 @@ class resolver:
             return
 
     def sources_direct(self):
-        hd_access = ['yify', 'gvideo', 'vk', 'movreel', 'hugefiles', '180upload', 'niter', 'einthusan']
+        hd_access = ['yify', 'gvideo', 'vk', 'hugefiles', '180upload', 'niter', 'einthusan']
         blocks = ['furk']
 
         self.sources = [i for i in self.sources if not i['host'] in blocks]
@@ -5985,11 +5985,13 @@ class resolver:
     def sources_hd_dict(self):
         self.hosthdDict = [
         'uploaded',
+        'vidplay',
         'rapidgator',
         'filefactory',
+        'uptobox',
         'bitshare',
         'uploadable',
-        'movreel',
+        #'movreel',
         #'billionuploads',
         'v-vids',
         'vidbull',
@@ -6004,8 +6006,11 @@ class resolver:
     def sources_dict(self):
         self.hostDict = [
         '180upload',
+        'vidplay',
+        'hdtvshows',
         'allmyvideos',
         'bestreams',
+        'uptobox',
         #'billionuploads',
         'cloudyvideos',
         'cloudzilla',
@@ -6026,7 +6031,7 @@ class resolver:
         'mooshare',
         'movdivx',
         'movpod',
-        'movreel',
+        #'movreel',
         'movshare',
         #'movzap',
         'mrfile',
