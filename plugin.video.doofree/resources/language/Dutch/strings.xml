@@ -145,7 +145,7 @@
 	<string id="30501">Films</string>
 	<string id="30502">Series</string>
 	<string id="30503">Kanalen</string>
-	<string id="30504">Mijn Genesis</string>
+	<string id="30504">Mijn DooFree</string>
 	<string id="30505">Laatste Films</string>
 	<string id="30506">Laatste Afleveringen</string>
 	<string id="30507">TV Kalender</string>
@@ -193,16 +193,16 @@
 	<string id="30582">Series</string>
 	<string id="30583">People (Movies)</string>
 	<string id="30584">People (TV)</string>
-	<string id="30601">Open Genesis instellingen...</string>
-	<string id="30602">Wis Genesis cache...</string>
-	<string id="30603">Clear Genesis sources...</string>
-	<string id="30604">Update Genesis locaties...</string>
+	<string id="30601">Open DooFree instellingen...</string>
+	<string id="30602">Wis DooFree cache...</string>
+	<string id="30603">Clear DooFree sources...</string>
+	<string id="30604">Update DooFree locaties...</string>
 	<string id="30605">[B]TRAKT[/B] : Importeer Collectie...</string>
 	<string id="30606">[B]TRAKT[/B] : Importeer Serie Collectie...</string>
 	<string id="30607">[B]TRAKT[/B] : Importeer Watchlist...</string>
 	<string id="30608">[B]TRAKT[/B] : Importeer Serie Watchlist...</string>
 	<string id="30609">[B]IMDB[/B] : Importeer Watchlist...</string>
 	<string id="30610">[B]IMDB[/B] : Importeer Serie Watchlist...</string>
-	<string id="30611">Genesis Film locatie...</string>
-	<string id="30612">Genesis Serie locatie...</string>
+	<string id="30611">DooFree Film locatie...</string>
+	<string id="30612">DooFree Serie locatie...</string>
 </strings>
